@@ -4,6 +4,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
+
 #pragma warning(disable:4996)
 
 typedef struct sequence
@@ -34,6 +36,8 @@ bool insert_seq(Seq_List* list, Sequence* seq_node);
 
 char* get_alphabet(char* file_name);
 
+void clean_dna_seq(Sequence* s);
 
+char rand_val_picker(char arr[], int size);
 
 #endif

@@ -1,5 +1,9 @@
 #include "parameters.h"
 
+// Description:
+// extracts the parameters from the argument line
+// Return:
+// filled out parameters struct
 Parameters* get_parameters(int argc, const char* argv[])
 {
 	Parameters* params = (Parameters*)malloc(sizeof(Parameters));

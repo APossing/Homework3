@@ -155,11 +155,12 @@ Sequence* get_sequence(char* file_name)
 			else
 				break;
 		}
-		else
+		else if (copy_line[0] == '\n')
 		{
 			//printf("%s\n", (temp->str));
 			reading_seq = false;
-			new_seq = new_seq->pNext;
+			break;
+			//new_seq = new_seq->pNext;
 		}
 	}
 
@@ -233,4 +234,76 @@ bool insert_seq(Seq_List* list, Sequence* seq_node)
 		return true;
 	}
 	return false;
+}
+
+// Description:
+// picks a random char value from array
+// Return:
+// returns char selected
+char rand_val_picker(char arr[], int size)
+{
+	srand(time(NULL));
+	int val = rand() % size;
+	return arr[val];
+}
+
+// Description:
+// removes characters other than ACGT and replaces with value
+// Return:
+// NA/changes the sequence
+void clean_dna_seq(Sequence* s)
+{
+	char c;
+	for (int i = 0; i < s->len_str; i++)
+	{
+		c = s->str[i];
+		switch (c)
+		{
+		case 'R':
+			char arrR[] = { 'A', 'G' }; //ignore this error
+			s->str[i] = rand_val_picker(arrR, 2);
+			break;
+		case 'Y':
+			char arrY[] = { 'C', 'T'}; //ignore this error
+			s->str[i] = rand_val_picker(arrY, 2);
+			break;
+		case 'K':
+			char arrK[] = { 'G', 'T'}; //ignore this error
+			s->str[i] = rand_val_picker(arrK, 2);
+			break;
+		case 'M':
+			char arrM[] = { 'A', 'C' }; //ignore this error
+			s->str[i] = rand_val_picker(arrM, 2);
+			break;
+		case 'S':
+			char arrS[] = { 'C', 'G' }; //ignore this error
+			s->str[i] = rand_val_picker(arrS, 2);
+			break;
+		case 'W':
+			char arrW[] = { 'A', 'T'}; //ignore this error
+			s->str[i] = rand_val_picker(arrW, 2);
+			break;
+		case 'B':
+			char arrB[] = { 'C', 'G', 'T'}; //ignore this error
+			s->str[i] = rand_val_picker(arrB, 3);
+			break;
+		case 'D':
+			char arrD[] = { 'A', 'G', 'T'}; //ignore this error
+			s->str[i] = rand_val_picker(arrD, 3);
+			break;
+		case 'H':
+			char arrH[] = { 'A', 'C', 'T'}; //ignore this error
+			s->str[i] = rand_val_picker(arrH, 3);
+			break;
+		case 'V':
+			char arrV[] = { 'A', 'C', 'G' }; //ignore this error
+			s->str[i] = rand_val_picker(arrV, 3);
+			break;
+		case 'N':
+			char arrN[] = { 'A', 'G', 'C', 'T'}; //ignore this error
+			s->str[i] = rand_val_picker(arrN, 4);
+			break;
+		}
+	}
+
 }
