@@ -13,8 +13,14 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Data">
-      <UniqueIdentifier>{09e08339-fc16-40b6-bb47-cdacd920709f}</UniqueIdentifier>
+    <Filter Include="Resource Files\fastas">
+      <UniqueIdentifier>{2130fe00-9faf-4e3d-a726-293268b84435}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\tests">
+      <UniqueIdentifier>{c4242812-30a5-4d95-b3d4-17b2f5e413b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\alphabets">
+      <UniqueIdentifier>{74e55e56-d57c-4d7d-ad87-4afd5de9bb8e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -38,48 +44,48 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="DNA_alphabet.txt">
-      <Filter>Data</Filter>
+      <Filter>Resource Files\alphabets</Filter>
     </Text>
     <Text Include="english_alphabet.txt">
-      <Filter>Data</Filter>
+      <Filter>Resource Files\alphabets</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="s1.fasta">
-      <Filter>Data</Filter>
-    </None>
-    <None Include="s2.fasta">
-      <Filter>Data</Filter>
-    </None>
     <None Include="Covid_Australia.fasta">
-      <Filter>Data</Filter>
+      <Filter>Resource Files\fastas</Filter>
     </None>
     <None Include="Covid_Brazil.fasta">
-      <Filter>Data</Filter>
+      <Filter>Resource Files\fastas</Filter>
     </None>
     <None Include="Covid_India.fasta">
-      <Filter>Data</Filter>
+      <Filter>Resource Files\fastas</Filter>
     </None>
     <None Include="Covid_USA.fasta">
-      <Filter>Data</Filter>
+      <Filter>Resource Files\fastas</Filter>
     </None>
     <None Include="Covid_Wuhan.fasta">
-      <Filter>Data</Filter>
+      <Filter>Resource Files\fastas</Filter>
     </None>
     <None Include="MERS_2012_Saudi.fasta">
-      <Filter>Data</Filter>
+      <Filter>Resource Files\fastas</Filter>
     </None>
     <None Include="MERS_2014_Saudi.fasta">
-      <Filter>Data</Filter>
+      <Filter>Resource Files\fastas</Filter>
     </None>
     <None Include="MERS_2014_USA.fasta">
-      <Filter>Data</Filter>
+      <Filter>Resource Files\fastas</Filter>
     </None>
     <None Include="SARS_2003.fasta">
-      <Filter>Data</Filter>
+      <Filter>Resource Files\fastas</Filter>
     </None>
     <None Include="SARS_2017.fasta">
-      <Filter>Data</Filter>
+      <Filter>Resource Files\fastas</Filter>
+    </None>
+    <None Include="s1.fasta">
+      <Filter>Resource Files\tests</Filter>
+    </None>
+    <None Include="s2.fasta">
+      <Filter>Resource Files\tests</Filter>
     </None>
   </ItemGroup>
 </Project>
