@@ -3,13 +3,33 @@
 Parameters* get_parameters(int argc, const char* argv[])
 {
 	Parameters* params = (Parameters*)malloc(sizeof(Parameters));
-	params->inputFileCount = argc - 1;
+	params->inputFileCount = argc - 4;
 	params->inputFileNames = malloc(sizeof(char*) * params->inputFileCount);
 	
-	for (int i = 1; i < argc; i++)
+	for (int i = 1; i < argc;)
 	{
-		params->inputFileNames[i-1] = malloc(sizeof(char) * strlen(argv[i]));
-		strcpy(params->inputFileNames[i-1], argv[i]);
+		if (argv[i][0] == '-')
+		{
+			if (argv[i][1] == 'a' || argv[i][1] == 'A')
+			{
+				i++;
+				params->alphabetFileName = malloc(sizeof(char) * strlen(argv[i]));
+				params->alphabetFileName = argv[i];
+				i++;
+			}
+			else if (argv[i][1] == 'i' || argv[i][1] == 'I')
+			{
+				int j = 0;
+				i++;
+				while (i < argc && argv[i][0] != '-')
+				{
+					params->inputFileNames[j] = malloc(sizeof(char) * strlen(argv[i]));
+					strcpy(params->inputFileNames[j], argv[i]);
+					j++;
+					i++;
+				}
+			}
+		}
 	}
 	return params;
 }

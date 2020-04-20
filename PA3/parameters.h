@@ -9,6 +9,7 @@ typedef struct parameters
 {
 	int inputFileCount;
 	char** inputFileNames;
+	char* alphabetFileName;
 	
 } Parameters;
 
