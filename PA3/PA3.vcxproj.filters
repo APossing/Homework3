@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{09e08339-fc16-40b6-bb47-cdacd920709f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fileReader.h">
@@ -32,5 +35,51 @@
     <ClInclude Include="parameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="DNA_alphabet.txt">
+      <Filter>Data</Filter>
+    </Text>
+    <Text Include="english_alphabet.txt">
+      <Filter>Data</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="s1.fasta">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="s2.fasta">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="Covid_Australia.fasta">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="Covid_Brazil.fasta">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="Covid_India.fasta">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="Covid_USA.fasta">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="Covid_Wuhan.fasta">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="MERS_2012_Saudi.fasta">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="MERS_2014_Saudi.fasta">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="MERS_2014_USA.fasta">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="SARS_2003.fasta">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="SARS_2017.fasta">
+      <Filter>Data</Filter>
+    </None>
   </ItemGroup>
 </Project>

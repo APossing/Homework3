@@ -67,12 +67,12 @@ Sequence* get_sequence(char* file_name)
 	if (infile == NULL)
 	{
 		printf("Sequence File couldn't be opened\n");
-		return FALSE;
+		return false;
 	}
 
 	char line[1000] = "";
 	char copy_line[1000] = "";
-	bool reading_seq = FALSE;
+	bool reading_seq = false;
 
 	// read file the first time to remember length of sequence for correct allocation
 	// in second read through
@@ -85,7 +85,7 @@ Sequence* get_sequence(char* file_name)
 		if (copy_line[0] == '>')
 		{
 
-			reading_seq = TRUE;
+			reading_seq = true;
 			char* str_start = NULL;
 			int i = 1;
 
@@ -105,7 +105,7 @@ Sequence* get_sequence(char* file_name)
 			//printf("%s, %d\n", (new_seq->str_name), (new_seq->str_name_len));
 		}
 		else if (((copy_line[0] >= 65 && copy_line[0] <= 90) || (copy_line[0] >= 97 &&
-			copy_line[0] <= 122)) && reading_seq == TRUE)
+			copy_line[0] <= 122)) && reading_seq == true)
 		{
 			int i = 0;
 			int len = strlen(copy_line);
@@ -116,11 +116,11 @@ Sequence* get_sequence(char* file_name)
 		}
 		else
 		{
-			reading_seq = FALSE;
+			reading_seq = false;
 			if (new_seq->len_str == 0)
 			{
 				fclose(infile);
-				return FALSE;
+				return false;
 			}
 		}
 	}
@@ -132,14 +132,14 @@ Sequence* get_sequence(char* file_name)
 
 		if (copy_line[0] == '>')
 		{
-			reading_seq = TRUE;
+			reading_seq = true;
 			char* str_start = NULL;
 			char* seq = (char*)malloc((new_seq->len_str + 1) * sizeof(char));
 			seq[0] = '\0';
 			new_seq->str = seq;
 		}
 		else if (((copy_line[0] >= 65 && copy_line[0] <= 90) || (copy_line[0] >= 97 &&
-			copy_line[0] <= 122)) && reading_seq == TRUE)
+			copy_line[0] <= 122)) && reading_seq == true)
 		{
 			int i = 0;
 			int len = strlen(copy_line);
@@ -158,7 +158,7 @@ Sequence* get_sequence(char* file_name)
 		else
 		{
 			//printf("%s\n", (temp->str));
-			reading_seq = FALSE;
+			reading_seq = false;
 			new_seq = new_seq->pNext;
 		}
 	}
@@ -230,7 +230,7 @@ bool insert_seq(Seq_List* list, Sequence* seq_node)
 			seq_node->pPrev = list->pTail;
 		}
 		list->pTail = seq_node;
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }

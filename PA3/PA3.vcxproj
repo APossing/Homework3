@@ -146,6 +146,24 @@
   <ItemGroup>
     <ClInclude Include="parameters.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="DNA_alphabet.txt" />
+    <Text Include="english_alphabet.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Covid_Australia.fasta" />
+    <None Include="Covid_Brazil.fasta" />
+    <None Include="Covid_India.fasta" />
+    <None Include="Covid_USA.fasta" />
+    <None Include="Covid_Wuhan.fasta" />
+    <None Include="MERS_2012_Saudi.fasta" />
+    <None Include="MERS_2014_Saudi.fasta" />
+    <None Include="MERS_2014_USA.fasta" />
+    <None Include="s1.fasta" />
+    <None Include="s2.fasta" />
+    <None Include="SARS_2003.fasta" />
+    <None Include="SARS_2017.fasta" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

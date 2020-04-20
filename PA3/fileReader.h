@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #pragma warning(disable:4996)
-#define TRUE 1
-#define FALSE 0
 
 typedef struct sequence
 {
