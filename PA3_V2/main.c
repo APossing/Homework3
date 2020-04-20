@@ -1,5 +1,6 @@
 #include "parameters.h"
 #include "fileReader.h"
+#include "st.h"
 
 int main(int argc, const char* argv[])
 {

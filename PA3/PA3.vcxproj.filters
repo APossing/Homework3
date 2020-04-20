@@ -24,23 +24,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="fileReader.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fileReader.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="parameters.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="parameters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="fileReader.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="DNA_alphabet.txt">
@@ -87,5 +79,13 @@
     <None Include="s2.fasta">
       <Filter>Resource Files\tests</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="fileReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="parameters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
