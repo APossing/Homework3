@@ -32,7 +32,7 @@ Sequence* init_sequence(void);
 
 Seq_List* init_list(void);
 
-bool insert_seq(Seq_List** list, Sequence** seq_node);
+bool insert_seq(Seq_List* list, Sequence* seq_node);
 
 char* get_alphabet(char* file_name);
 

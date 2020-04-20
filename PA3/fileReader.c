@@ -1,6 +1,9 @@
 #include "fileReader.h"
 
-
+// Description:
+// extracts an alphabet from an alphabet fil
+// Return:
+// array of alphabet characters
 char* get_alphabet(char* file_name)
 {
 	FILE* infile = fopen(file_name, "r");
@@ -53,6 +56,10 @@ char* get_alphabet(char* file_name)
 	}
 }
 
+// Description:
+// extracts a sequence name and sequence from a file containing a single sequence
+// Return:
+// filled out sequence object
 Sequence* get_sequence(char* file_name)
 {
 	FILE* infile = fopen(file_name, "r");
