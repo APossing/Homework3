@@ -8,8 +8,15 @@ int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 	{
 		for (int j = i + 1; j < seqNum; j++)
 		{
-			char* seq1 = seqArray[i]->str;
-			char* seq2 = seqArray[j]->str;
+			char* seq1 = (char*)malloc((seqArray[i]->len_str + 1) * sizeof(char));
+			char* seq2 = (char*)malloc((seqArray[j]->len_str + 1) * sizeof(char));
+
+			strcpy(seq1, seqArray[i]->str);
+			strcpy(seq2, seqArray[j]->str);
+
+			seq1[seqArray[i]->len_str] = '$';
+			seq2[seqArray[j]->len_str] = '$';
+
 			Node* gstHead = Build_GSTree(seq1, seq2);
 
 			LcsCoordinate* lcs = Get_LCS(gstHead);

@@ -43,6 +43,7 @@ int gJ;
 int node_count;
 int inter_node;
 int leafs;
+int seq_colour;
 
 // Description:
 //	The function Creates a new Node with ID of global node_count
@@ -82,18 +83,20 @@ bool Is_Root(Node* u);
 
 Node* Build_GSTree(char* seq1, char* seq2);
 
+int Colour_Tree(Node* u);
+
 LcsCoordinate* Get_LCS(Node* node);
 
 // Description:
-//	This function is in charge of building the tree based of off
-//	Input Sequence and the alphabet provided
+//	This function is in charge of adding to the tree and
+//	building it up
 //	tree is built on the global root
 // Parameters:
 //	Sequence on which to build tree and alphabet used in the sequence
 // Returns:
 //	Root Node passed back if build succesfull
 //	NUll pointer if build unsucessfull
-Node* Build_STree(char* seq, char* alph);
+Node* Insert_Sequence(char* seq, Node* pRoot, int colour);
 
 // Description:
 //	Step 3 of IA

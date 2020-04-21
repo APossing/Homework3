@@ -65,9 +65,36 @@ bool Is_Root(Node* u)
 	return false;
 }
 
-Node* Build_GSTree(char* seq1, char* seq2)
+Node* Build_GSTree(char* str1, char* str2)
 {
-	return NULL;
+	Node* pRoot = NULL;
+	gSeq = NULL;
+	seq_len = node_count = inter_node = leafs = 0;
+
+	// Create root node which isnt counted
+	pRoot = New_Node(-1, -1, 0, -1);
+	pRoot->colour = 3;
+	pRoot = Insert_Sequence(str1, pRoot, 1);
+	pRoot = Insert_Sequence(str2, pRoot, 2);
+
+	Colour_Tree(pRoot);
+
+	return pRoot;
+}
+
+int Colour_Tree(Node* u)
+{
+	if (Is_Leaf(u) == true)
+		return u->colour;
+
+	u->colour = Colour_Tree(u->pCh);
+	int colour = Colour_Tree(u->pSib);
+
+	// if both already mixed colour 3, will stay like that
+	if (u->colour != colour)
+		colour = 3;
+
+	return colour;
 }
 
 LcsCoordinate* Get_LCS(Node* node)
@@ -75,24 +102,35 @@ LcsCoordinate* Get_LCS(Node* node)
 	return NULL;
 }
 
-Node* Build_STree(char* seq1, char* seq2)
+Node* Insert_Sequence(char* seq, Node* pRoot, int colour)
 {
-	gSeq = seq1;
-	seq_len = strlen(seq1);
+	gSeq = seq;
+	seq_len = strlen(seq);
 	gJ = seq_len - 1;
 	int i = 0;					// Current insert index in sequence
-	int j = gJ;	// Index of last char "$" in string
-	pRoot = New_Node(-1, -1, 0, -1);	// Create root node which isnt counted
-	node_count = inter_node = leafs = 0; // Set everything to zero
-	pRoot->sl = pRoot;
+	int j = gJ;					// Index of last char "$" in string
+	seq_colour = colour;
 
-	// First node is made and inserted into tree
-	Node* cur = New_Node(i, j, seq_len, leafs);
-	leafs++;
-	pRoot->pCh = cur;
-	cur->pPar = pRoot;
+	Node* cur = NULL;
 
-	i++;
+	if (seq_colour == 1)			// If first sequence
+	{
+		node_count = inter_node = leafs = 0; // Set everything to zero
+		pRoot->sl = pRoot;
+
+		// First node is made and inserted into tree
+		cur = New_Node(i, j, seq_len, leafs);
+		cur->colour = seq_colour;
+		leafs++;
+		pRoot->pCh = cur;
+		cur->pPar = pRoot;
+
+		i++;
+	}
+	else
+	{
+		cur = pRoot;
+	}
 
 	Node* u = NULL;
 	Node* v = NULL;
@@ -142,11 +180,7 @@ Node* Build_STree(char* seq1, char* seq2)
 		i++;
 	}
 
-	Node* exit_node = pRoot;		// Saves root location
-	pRoot = gSeq = NULL;
-	seq_len = node_count = inter_node = leafs = 0;
-
-	return exit_node;			// returns root node
+	return pRoot;			// returns root node
 }
 
 Node* Case_IA(Node* v, int i, int alpha)
@@ -187,6 +221,8 @@ Node* FindPath(Node* u, int i)
 	{
 		// Create new leaf node
 		Node* new_leaf = New_Node(i, gJ, u->sd + (seq_len - i), leafs);
+		new_leaf->colour = seq_colour;
+
 		leafs++;
 		new_leaf->pPar = cur;			// Connects to parent
 		if (temp == NULL)				// Needs to be inserted as first node
@@ -214,11 +250,18 @@ Node* FindPath(Node* u, int i)
 
 		if (j > cur->j)
 		{
+			if (Is_Leaf(cur) == true)
+			{
+				cur->colour = 3;
+				return cur;
+			}
 			return FindPath(cur, i);
 		}
 		else
 		{
 			Node* new_internal = New_Node(cur->i, j - 1, cur->sd - (cur->j - j + 1), seq_len + inter_node);
+			new_internal->colour = seq_colour;
+
 			inter_node++;
 			new_internal->pCh = cur;
 			new_internal->pPar = cur->pPar;
@@ -261,6 +304,8 @@ Node* NodeHops(Node* u, int i, int beta)
 		else // if beta ends early
 		{
 			Node* new_internal = New_Node(cur->i, cur->i + beta - 1, cur->pPar->sd + beta, seq_len + inter_node);
+			new_internal->colour = seq_colour;
+
 			inter_node++;
 			new_internal->pCh = cur;
 			new_internal->pPar = cur->pPar;
