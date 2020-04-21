@@ -144,12 +144,14 @@
     <ClCompile Include="parameters.c" />
     <ClCompile Include="similarityMatrix.c" />
     <ClCompile Include="st.c" />
+    <ClCompile Include="task2.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fileReader.h" />
     <ClInclude Include="parameters.h" />
     <ClInclude Include="similarityMatrix.h" />
     <ClInclude Include="st.h" />
+    <ClInclude Include="task2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -12,5 +12,5 @@
 
 
 int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum);
-
+void Print_Simularity_Matrix(int* matrix, int seqNum);
 #endif
