@@ -1,7 +1,8 @@
 #include "parameters.h"
 #include "fileReader.h"
 #include "st.h"
-
+#include "similarityMatrix.h"
+#include "task2.h"
 int main(int argc, const char* argv[])
 {
     Parameters* params = get_parameters(argc, argv);
@@ -14,6 +15,6 @@ int main(int argc, const char* argv[])
         seqArray[i] = sequence;
     }
     Compute_Similarity_Matrix(seqArray, params->inputFileCount);
-
+	
     return 0;
 }

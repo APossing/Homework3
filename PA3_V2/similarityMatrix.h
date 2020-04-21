@@ -9,7 +9,7 @@
 
 #include "st.h"
 #include "fileReader.h"
-
+#include "task2.h"
 
 int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum);
 void Print_Simularity_Matrix(int* matrix, int seqNum);

@@ -22,15 +22,16 @@ int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 			LcsCoordinate* lcs = Get_LCS(gstHead);
 
 			//your stuff here
-			int A = 1;
-			int B = 2;
-			int C = 4;
+			int A = GetAlignmentValue("ACATGC", 6, "ACACT", 5, -5, -2, 1, -2);
+			int B = lcs->x2-lcs->x1;
+			int C = GetAlignmentValue("ACATGC", 6, "ACACT", 5, -5, -2, 1, -2);;
 
 			//insert a value into matrix
 			similarityMatix[(j*(j - 1) / 2) + i] = A+B+C;
 		}
 	}
 
+	return similarityMatix;
 	//should return a matrix or should output it, or what ever XD
 }
 

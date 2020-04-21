@@ -2,12 +2,11 @@
 #define TASK2_H
 #include <limits.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include "FullCellList.h"
 
-typedef struct dP_cell {
-	int substitutionScore;
-	int deletionScore;
-	int insertionScore;
-} DP_cell;
+
 DP_cell* FillInCell(int row, int col, int h, int g, int match, int mismatch, DP_cell** table, char* s1, char* s2);
 DP_cell* CalculateCell(int row, int col, int h, int g, int match, int mismatch, DP_cell** table, char* s1, char* s2);
 DP_cell* GetCalculatedCell(int row, int col, int h, int g, int match, int mismatch, DP_cell** table, char* s1, char* s2);
@@ -17,5 +16,8 @@ int GetMaxInsertionScore(int row, int col, int h, int g, int match, int mismatch
 int GetAlignmentValue(char* s1, int s1Length, char* s2, int s2Length, int h, int g, int match, int mismatch);
 int GetCellMax(DP_cell* cell);
 void PrintTable(DP_cell** table, int rows, int cols);
+int TraceBackGlobal(int row, int col, char* s1, char* s2, DP_cell** table, int h);
+int TraceBackGlobalLean(int row, int col, DP_cell** table, int h);
+FullCellList* GetMaxAdjacentCells(int row, int col, enum Direction prevDirection, DP_cell** table, int h);
 #endif
 
