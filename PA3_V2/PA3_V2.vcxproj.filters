@@ -27,6 +27,9 @@
     <ClCompile Include="st.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="similarityMatrix.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="parameters.h">
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="st.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="similarityMatrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

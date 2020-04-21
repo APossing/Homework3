@@ -4,20 +4,16 @@
 
 int main(int argc, const char* argv[])
 {
-	Parameters* params = get_parameters(argc, argv);
-	Seq_List* seqList = init_list();
+    Parameters* params = get_parameters(argc, argv);
+    Sequence** seqArray = (Sequence**)malloc(sizeof(Sequence*) * params->inputFileCount);
 
-	for (int i = 0; i < params->inputFileCount; i++)
-	{
-		Sequence* sequence = get_sequence(params->inputFileNames[i]);
-		clean_dna_seq(sequence);
-		if (insert_seq(seqList, sequence) == false)
-		{
-			printf("failed to insert into seq list");
-			return 0;
-		}
-	}
+    for (int i = 0; i < params->inputFileCount; i++)
+    {
+        Sequence* sequence = get_sequence(params->inputFileNames[i]);
+        clean_dna_seq(sequence);
+        seqArray[i] = sequence;
+    }
+    Compute_Similarity_Matrix(seqArray, params->inputFileCount);
 
-	int b = 5;
-	return 0;
+    return 0;
 }

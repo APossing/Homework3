@@ -9,14 +9,15 @@ Node* New_Node(int i, int j, int sd, int id)
 		new_node->id = id;
 		node_count++;
 
-		new_node->i = i;
-		new_node->j = j;
+		new_node->i  = i;
+		new_node->j  = j;
 		new_node->sd = sd;
 
-		new_node->pCh = NULL;
-		new_node->pPar = NULL;
-		new_node->pSib = NULL;
-		new_node->sl = NULL;
+		new_node->pCh    = NULL;
+		new_node->pPar   = NULL;
+		new_node->pSib   = NULL;
+		new_node->sl     = NULL;
+		new_node->colour = 0;
 	}
 
 	return new_node;
@@ -64,10 +65,20 @@ bool Is_Root(Node* u)
 	return false;
 }
 
-Node* Build_STree(char* seq, char* alph)
+Node* Build_GSTree(char* seq1, char* seq2)
 {
-	gSeq = seq;
-	seq_len = strlen(seq);
+	return NULL;
+}
+
+LcsCoordinate* Get_LCS(Node* node)
+{
+	return NULL;
+}
+
+Node* Build_STree(char* seq1, char* seq2)
+{
+	gSeq = seq1;
+	seq_len = strlen(seq1);
 	gJ = seq_len - 1;
 	int i = 0;					// Current insert index in sequence
 	int j = gJ;	// Index of last char "$" in string

@@ -142,11 +142,13 @@
     <ClCompile Include="fileReader.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="parameters.c" />
+    <ClCompile Include="similarityMatrix.c" />
     <ClCompile Include="st.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fileReader.h" />
     <ClInclude Include="parameters.h" />
+    <ClInclude Include="similarityMatrix.h" />
     <ClInclude Include="st.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -7,6 +7,8 @@
 #include <stdbool.h>
 #include <time.h>
 
+#include "fileReader.h"
+
 
 // Structure of the Node
 typedef struct node
@@ -21,8 +23,17 @@ typedef struct node
 	int i;			// Start of edge Index
 	int j;			// End of edge Index (including)
 	int sd;			// String Depth
+	int colour;
 
 } Node;
+
+typedef struct lcsCoordinate
+{
+	int x1;
+	int y1;
+	int x2;
+	int y2;
+} LcsCoordinate;
 
 // Global variable that is a pointer top the root node
 Node* pRoot;
@@ -68,6 +79,10 @@ bool Is_Leaf(Node* u);
 //	Boolean value of True if Root
 //	False if not a Root
 bool Is_Root(Node* u);
+
+Node* Build_GSTree(char* seq1, char* seq2);
+
+LcsCoordinate* Get_LCS(Node* node);
 
 // Description:
 //	This function is in charge of building the tree based of off
