@@ -76,13 +76,14 @@ Node* Build_GSTree(char* l_seq, int start_ind[], int count)
 	Node* exit_node = Insert_Sequence(l_seq, start_ind, count);
 
 	printf("\n\nTree Before Colouring:\n");
-	Tree_Detailed_Print(exit_node);
+	Tree_Detailed_Print(exit_node, 0);
 
 	Colour_Tree(exit_node);
 
 	printf("\n\nTree After Colouring:\n");
-	Tree_Detailed_Print(exit_node);
+	Tree_Detailed_Print(exit_node, 0);
 
+	gSeq = NULL;
 	return exit_node;
 }
 
@@ -254,7 +255,7 @@ Node* Insert_Sequence(char* seq, int start_ind[], int count)
 	// Main loop in charge of inserting every suffix in sequence
 	while (i <= j)
 	{
-		printf("\nInserting i:%d\n", i);
+		printf("\nInserting i:%d --- j:%d | %c -- %c\n", i, j, gSeq[i], gSeq[j]);
 		cur_i = i;
 		if (i >= tipping_point && string_count < count)
 		{
@@ -313,7 +314,7 @@ Node* Insert_Sequence(char* seq, int start_ind[], int count)
 	}
 
 	Node* exit_node = pRoot;		// Saves root location
-	pRoot = gSeq = NULL;
+	pRoot = NULL;
 	seq_len = node_count = inter_node = leafs = 0;
 
 	return exit_node;			// returns root node
@@ -819,17 +820,32 @@ void GetFingerPrints(Node* curNode, AdamFingerprint* fingerprints, int mixedColo
 	}
 }
 
-void Tree_Detailed_Print(Node* node)
+void Tree_Detailed_Print(Node* node, int depth)
 {
 	if (node == NULL)
-	{
-		printf("NULL\n");
 		return NULL;
-	}
+	printf("\n");
+	Print_Spaces(depth);
 	printf("At ");
 	Print_Node(node);
-	printf("Children of %d ----->\n", node->id);
-	Tree_Detailed_Print(node->pCh);
-	printf("<----- Children of %d\n", node->id);
-	Tree_Detailed_Print(node->pSib);
+	Print_Spaces(depth);
+
+	printf("\033[1;31m");
+	printf("Start of Children of %d ----->\n", node->id);
+	printf("\033[0m");
+
+	Tree_Detailed_Print(node->pCh, depth+1);
+	Print_Spaces(depth);
+
+	printf("\033[1;31m");
+	printf("<---------- Children of %d End\n", node->id);
+	printf("\033[0m");
+
+	Tree_Detailed_Print(node->pSib, depth+1);
+}
+
+void Print_Spaces(int depth)
+{
+	for (int i = 0; i < depth; i++)
+		printf("  ");
 }

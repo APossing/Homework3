@@ -285,6 +285,8 @@ void Exact_Match_Repeat(Node* u, FILE* fp);
 
 void GetFingerPrints(Node* curNode, AdamFingerprint* fingerprints, int mixedColor);
 
-void Tree_Detailed_Print(Node* node);
+void Tree_Detailed_Print(Node* node, int depth);
+
+void Print_Spaces(int depth);
 
 #endif
