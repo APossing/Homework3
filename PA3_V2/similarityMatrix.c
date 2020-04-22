@@ -18,7 +18,20 @@ int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 	GetFingerPrints(root, fingerPrints, mix_colour);
 
 	for (int i = 0; i < seqNum; i++)
-		fingerPrints[i].size++;
+	{
+		fingerPrints[i].str = malloc(sizeof(char) * fingerPrints[i].size+1);
+		NodeListNode* curNode = fingerPrints[i].pHead;
+		int curLocation = 0;
+		while (curNode->pNext != NULL)
+		{
+			for (int j = curNode->myNode->i; j <= curNode->myNode->j; j++)
+				fingerPrints[i].str[curLocation++] = c->str[j];
+			curNode = curNode->pNext;
+		}
+		fingerPrints[i].str[curLocation++] = c->str[curNode->myNode->i];
+		fingerPrints[i].str[curLocation++] = '\0';
+	}
+		
 	
 	for (int i = 0; i < seqNum; i++)
 	{

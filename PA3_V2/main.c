@@ -11,7 +11,7 @@ int main(int argc, const char* argv[])
     for (int i = 0; i < params->inputFileCount; i++)
     {
         Sequence* sequence = get_sequence(params->inputFileNames[i]);
-        //clean_dna_seq(sequence);
+        clean_dna_seq(sequence);
         seqArray[i] = sequence;
     }
     Compute_Similarity_Matrix(seqArray, params->inputFileCount);
