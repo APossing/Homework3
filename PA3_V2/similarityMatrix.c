@@ -6,6 +6,17 @@ int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 	
 	int* similarityMatix = malloc(sizeof(int) * (seqNum * (seqNum - 1) / 2));
 	
+	Node* root = Build_GSTree(c->str, c->starIndexes, c->starIndexCount);
+
+	AdamFingerprint* fingerPrints = malloc(sizeof(AdamFingerprint) * seqNum);
+	for (int i = 0; i < seqNum; i++)
+		fingerPrints[i].count = 0;
+	
+	GetFingerPrints(root, fingerPrints, mix_colour);
+
+	for (int i = 0; i < seqNum; i++)
+		fingerPrints[i].count++;
+	
 	for (int i = 0; i < seqNum; i++)
 	{
 		for (int j = i + 1; j < seqNum; j++)
@@ -97,7 +108,7 @@ ConcatSequence* BuildConcatSequence(Sequence** seqArray, int seqNum)
 	{
 		length += seqArray[i]->len_str + 1;
 	}
-	concat->str = malloc(sizeof(char) * length);
+	concat->str = malloc(sizeof(char) * length+1);
 	concat->strLength = length;
 	int curLocation = 0;
 	for (int i = 0; i < seqNum; i++)
@@ -106,6 +117,7 @@ ConcatSequence* BuildConcatSequence(Sequence** seqArray, int seqNum)
 		strcpy(concat->str + curLocation, seqArray[i]->str);
 		curLocation += seqArray[i]->len_str;
 		concat->str[curLocation++] = '$';
+		concat->str[curLocation] = '\0';
 	}
 	return concat;
 }

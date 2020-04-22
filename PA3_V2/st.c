@@ -685,3 +685,38 @@ void Exact_Match_Repeat(Node* u, FILE* fp)
 	}
 	fprintf(fp, "\n");
 }
+
+
+
+void GetFingerPrints(Node* curNode, AdamFingerprint* fingerprints, int mixedColor)
+{
+	if (curNode == NULL)
+		return;
+	if (curNode->pCh == NULL)
+	{
+		if (curNode->colour == mixedColor)
+			return;
+		
+		int endOfEdge = curNode->j;
+		int color = curNode->colour;
+		while (curNode != NULL && curNode->colour == color)
+		{
+			curNode = curNode->pPar;
+		}
+		curNode = curNode->pCh;
+		int strLen = endOfEdge - curNode->i;
+		if (strLen > fingerprints[color-1].count)
+		{
+			fingerprints[color-1].count = strLen;
+			fingerprints[color-1].startNode = curNode;
+		}
+	}
+	else
+	{
+		do
+		{
+			GetFingerPrints(curNode->pCh, fingerprints, mixedColor);
+			curNode = curNode->pSib;
+		} while (curNode != NULL);
+	}
+}

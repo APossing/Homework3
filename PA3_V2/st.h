@@ -41,6 +41,13 @@ typedef struct fingerprint
 	int y;
 } Fingerprint;
 
+typedef struct adamFingerprint
+{
+	int count;
+	Node* startNode;
+	char* str;
+} AdamFingerprint;
+
 // Global variable that is a pointer top the root node
 Node* pRoot;
 char* gSeq;
@@ -272,5 +279,7 @@ int Total_SD(Node* u);
 Node* Deepest_Internal_Node(Node* u);
 
 void Exact_Match_Repeat(Node* u, FILE* fp);
+
+void GetFingerPrints(Node* curNode, AdamFingerprint* fingerprints, int mixedColor);
 
 #endif
