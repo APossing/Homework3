@@ -115,8 +115,6 @@ Node* Find_Fingerprint(Node* node, int seq_num, int mix_colour)
 	Node* ch = NULL;
 
 	sib = Find_Fingerprint(node->pSib, seq_num, mix_colour);
-	ch = Find_Fingerprint(node->pCh, seq_num, mix_colour);
-	
 
 	if (node->colour == seq_num)
 	{
@@ -141,7 +139,7 @@ Node* Find_Fingerprint(Node* node, int seq_num, int mix_colour)
 	}
 	else if (node->colour == mix_colour)
 	{
-		
+		ch = Find_Fingerprint(node->pCh, seq_num, mix_colour);
 	}
 	else
 	{
