@@ -75,7 +75,13 @@ Node* Build_GSTree(char* l_seq, int start_ind[], int count)
 	pRoot->pPar = pRoot;
 	Node* exit_node = Insert_Sequence(l_seq, start_ind, count);
 
+	printf("\n\nTree Before Colouring:\n");
+	Tree_Detailed_Print(exit_node);
+
 	Colour_Tree(exit_node);
+
+	printf("\n\nTree After Colouring:\n");
+	Tree_Detailed_Print(exit_node);
 
 	return exit_node;
 }
@@ -200,16 +206,17 @@ void Print_Node(Node* node)
 	printf("Colour: % d | ", node->colour);
 	if (Is_Leaf(node) == true)
 	{
-		printf("Leaf Node\n");
+		printf("Leaf Node | ");
 	}
 	else if(Is_Root(node) == true)
 	{
-		printf("Root Node\n");
+		printf("Root Node | ");
 	}
 	else
 	{
-		printf("Internal Node\n");
+		printf("Internal Node | ");
 	}
+	printf("SDepth: %d\n", node->sd);
 }
 
 Node* Insert_Sequence(char* seq, int start_ind[], int count)
@@ -247,6 +254,7 @@ Node* Insert_Sequence(char* seq, int start_ind[], int count)
 	// Main loop in charge of inserting every suffix in sequence
 	while (i <= j)
 	{
+		printf("\nInserting i:%d\n", i);
 		cur_i = i;
 		if (i >= tipping_point && string_count < count)
 		{
@@ -401,7 +409,7 @@ Node* FindPath(Node* u, int i)
 		}
 		else
 		{
-			printf("Mismatch, new node created");
+			printf("Mismatch, new node created\n");
 			Node* new_internal = New_Node(cur->i, j-1, cur->sd - (cur->j-(j-1)), seq_len + inter_node);
 			if (cur->colour != cur_colour)
 			{
@@ -484,7 +492,7 @@ Node* NodeHops(Node* u, int i, int beta)
 			return new_internal;
 		}
 	}
-	printf("Node Hop went out of control, should not get here!");
+	printf("Node Hop went out of control, should not get here!\n");
 	return NULL;
 }
 
@@ -809,4 +817,19 @@ void GetFingerPrints(Node* curNode, AdamFingerprint* fingerprints, int mixedColo
 			curNode = curNode->pSib;
 		} while (curNode != NULL);
 	}
+}
+
+void Tree_Detailed_Print(Node* node)
+{
+	if (node == NULL)
+	{
+		printf("NULL\n");
+		return NULL;
+	}
+	printf("At ");
+	Print_Node(node);
+	printf("Children of %d ----->\n", node->id);
+	Tree_Detailed_Print(node->pCh);
+	printf("<----- Children of %d\n", node->id);
+	Tree_Detailed_Print(node->pSib);
 }
