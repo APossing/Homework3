@@ -99,7 +99,13 @@ int Colour_Tree(Node* u)
 
 LcsCoordinate* Get_LCS(Node* node)
 {
-	return NULL;
+
+	LcsCoordinate* lcs = (LcsCoordinate*)malloc(sizeof(LcsCoordinate));
+	lcs->x1 = 2;
+	lcs->y1 = 3;
+	lcs->x2 = 3;
+	lcs->y2 = 4;
+	return lcs;
 }
 
 Node* Insert_Sequence(char* seq)
@@ -442,6 +448,23 @@ void BWT(Node* u, FILE* fp, char* seq)
 	if (Is_Leaf(u) == true)
 	{
 		print_BWT(u->id, fp, seq);
+		fprintf(fp, "\n");
+	}
+
+	BWT(u->pCh, fp, seq);
+	BWT(u->pSib, fp, seq);
+	return;
+}
+
+void BWT_Colour(Node* u, FILE* fp, char* seq)
+{
+	if (u == NULL)
+		return;
+
+	if (Is_Leaf(u) == true)
+	{
+		print_BWT(u->id, fp, seq);
+		fprintf(" %d", u->colour);
 		fprintf(fp, "\n");
 	}
 

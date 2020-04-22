@@ -191,12 +191,22 @@ int Post_Order(Node* u, int count, FILE* fp);
 
 // Description:
 //	Enumerating ONLY the leaf node id's from left to right
-// (lexicographically smallest to largest) and prints them to desired output
+//  (lexicographically smallest to largest) and prints them to desired output
 // Parameters:
 //	Node u to do BWT traversal from and count for line length
 // Returns:
 //	NONE
 void BWT(Node* u, FILE* fp, char* seq);
+
+// Description:
+//	Enumerating ONLY the leaf node id's from left to right
+//  (lexicographically smallest to largest) and prints them to desired output
+//  with colours
+// Parameters:
+//	Node u to do BWT traversal from and count for line length
+// Returns:
+//	NONE
+void BWT_Colour(Node* u, FILE* fp, char* seq);
 
 // Description:
 //	prints an enumerated leaf to desired output
