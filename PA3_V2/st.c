@@ -92,15 +92,22 @@ int Colour_Tree(Node* u)
 	if (u == NULL)
 		return 0;
 
+	Print_Node(u);
+
 	int new_colour = Colour_Tree(u->pCh);
 	if (new_colour != 0 && new_colour != u->colour)
 		u->colour = mix_colour;
 
 	int colour = Colour_Tree(u->pSib);
-	if (u->colour == mix_colour)
+	if (colour == 0)
+		colour = u->colour;
+	else if (u->colour == mix_colour)
 		colour = mix_colour;
 	else if (u->colour != colour)
 		colour = mix_colour;
+
+	printf("OUT ");
+	Print_Node(u);
 
 	return colour;
 }
