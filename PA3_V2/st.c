@@ -353,8 +353,15 @@ Node* FindPath(Node* u, int i)
 		}
 		else
 		{
-			Node* new_internal = New_Node(cur->i, j - 1, j - cur_i, seq_len + inter_node);
-			new_internal->colour = cur_colour;
+			Node* new_internal = New_Node(cur->i, j-1, cur->i - j + 2, seq_len + inter_node);
+			if (cur->colour != cur_colour)
+			{
+				new_internal->colour = mix_colour;
+			}
+			else
+			{
+				new_internal->colour = cur_colour;
+			}
 			inter_node++;
 			new_internal->pCh = cur;
 			new_internal->pPar = cur->pPar;
