@@ -826,6 +826,11 @@ void Tree_Detailed_Print(Node* node, int depth)
 		return NULL;
 	printf("\n");
 	Print_Spaces(depth);
+	printf("\033[1;32m");
+	printf("Depth: %d\n", depth);
+	printf("\033[0m");
+
+	Print_Spaces(depth);
 	printf("At ");
 	Print_Node(node);
 	Print_Spaces(depth);
@@ -841,7 +846,7 @@ void Tree_Detailed_Print(Node* node, int depth)
 	printf("<---------- Children of %d End\n", node->id);
 	printf("\033[0m");
 
-	Tree_Detailed_Print(node->pSib, depth+1);
+	Tree_Detailed_Print(node->pSib, depth);
 }
 
 void Print_Spaces(int depth)
