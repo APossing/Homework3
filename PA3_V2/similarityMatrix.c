@@ -2,6 +2,8 @@
 
 int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 {
+	ConcatSequence* c = BuildConcatSequence(seqArray, seqNum);
+	
 	int* similarityMatix = malloc(sizeof(int) * (seqNum * (seqNum - 1) / 2));
 	
 	for (int i = 0; i < seqNum; i++)
@@ -80,4 +82,28 @@ char* Get_String_Reverse(char* str, int length)
 		returnStr[length - 1 - i] = str[i];
 	}
 	return returnStr;
+}
+
+ConcatSequence* BuildConcatSequence(Sequence** seqArray, int seqNum)
+{
+	ConcatSequence* concat = malloc(sizeof(ConcatSequence));
+	concat->starIndexCount = seqNum;
+	concat->starIndexes = malloc(sizeof(int) * seqNum);
+	
+	int length = 0;
+	for (int i = 0; i < seqNum; i++)
+	{
+		length += seqArray[i]->len_str + 1;
+	}
+	concat->str = malloc(sizeof(char) * length);
+	concat->strLength = length;
+	int curLocation = 0;
+	for (int i = 0; i < seqNum; i++)
+	{
+		concat->starIndexes[i] = curLocation;
+		strcpy(concat->str + curLocation, seqArray[i]->str);
+		curLocation += seqArray[i]->len_str;
+		concat->str[curLocation++] = '$';
+	}
+	return concat;
 }
