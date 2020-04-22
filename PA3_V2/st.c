@@ -72,24 +72,25 @@ Node* Build_GSTree(char* l_seq, char* str1, char* str2)
 	pRoot = New_Node(-1, -1, 0, -1);
 	pRoot->colour = 3;
 	tipping_point = strlen(str1);
-	Insert_Sequence(l_seq);
+	Node* exit_node = Insert_Sequence(l_seq);
 
-	Colour_Tree(pRoot);
+	Colour_Tree(exit_node);
 
-	return pRoot;
+	return exit_node;
 }
 
 int Colour_Tree(Node* u)
 {
 	if (u == NULL)
 		return 0;
-	if (Is_Leaf(u) == true)
-		return u->colour;
 
-	u->colour = Colour_Tree(u->pCh);
+	int new_colour = Colour_Tree(u->pCh);
+	if (new_colour != 0 && new_colour != u->colour)
+		u->colour = 3;
+
 	int colour = Colour_Tree(u->pSib);
 
-	// if both already mixed colour 3, will stay like that
+	// if both already mixed (colour 3), will stay like that
 	if (u->colour != colour)
 		colour = 3;
 
