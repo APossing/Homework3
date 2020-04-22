@@ -38,14 +38,13 @@ typedef struct lcsCoordinate
 // Global variable that is a pointer top the root node
 Node* pRoot;
 char* gSeq;
-char* cur_seq;
+int cur_colour;
+int tipping_point;
 int seq_len;
 int gJ;
-int cur_J;
 int node_count;
 int inter_node;
 int leafs;
-int seq_colour;
 
 // Description:
 //	The function Creates a new Node with ID of global node_count
@@ -98,7 +97,7 @@ LcsCoordinate* Get_LCS(Node* node);
 // Returns:
 //	Root Node passed back if build succesfull
 //	NUll pointer if build unsucessfull
-Node* Insert_Sequence(char* seq, int colour);
+Node* Insert_Sequence(char* seq);
 
 // Description:
 //	Step 3 of IA

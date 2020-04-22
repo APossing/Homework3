@@ -14,7 +14,7 @@ int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 			strcpy(seq1, seqArray[i]->str);
 			strcpy(seq2, seqArray[j]->str);
 
-			seq1[seqArray[i]->len_str] = '$';
+			seq1[seqArray[i]->len_str] = '#';
 			seq1[seqArray[i]->len_str+1] = '\0';
 			seq2[seqArray[j]->len_str] = '$';
 			seq2[seqArray[j]->len_str+1] = '\0';
