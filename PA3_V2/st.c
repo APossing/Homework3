@@ -111,20 +111,17 @@ Node* Find_Fingerprint(Node* node, int seq_num, int mix_colour)
 	if (node == NULL)
 		return NULL;
 
-	Node* sib = NULL;
-	Node* ch = NULL;
-
-	sib = Find_Fingerprint(node->pSib, seq_num, mix_colour);
-
 	if (node->colour == seq_num)
 	{
-		if (sib->sd < node->sd)
-		{
-			return sib;
-		}
-		else if (sib->sd > node->sd)
+		Node* sib = Find_Fingerprint(node->pSib, seq_num, mix_colour);
+
+		if (sib == NULL || sib->sd > node->sd)
 		{
 			return node;
+		}
+		else if (sib->sd < node->sd)
+		{
+			return sib;
 		}
 		else
 		{
@@ -139,11 +136,17 @@ Node* Find_Fingerprint(Node* node, int seq_num, int mix_colour)
 	}
 	else if (node->colour == mix_colour)
 	{
-		ch = Find_Fingerprint(node->pCh, seq_num, mix_colour);
+		Node* ch = Find_Fingerprint(node->pCh, seq_num, mix_colour);
+		Node* sib = Find_Fingerprint(node->pSib, seq_num, mix_colour);
+		if (ch == NULL && sib == NULL)
+			return NULL;
+		////////////////////////////////////////////////////////////////
+		//all the cases here!!!
+		////////////////////////////////////////////////////////////////
 	}
 	else
 	{
-
+		return Find_Fingerprint(node->pCh, seq_num, mix_colour);
 	}
 }
 
