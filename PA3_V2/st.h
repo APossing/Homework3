@@ -57,6 +57,7 @@ int tipping_point;
 int seq_len;
 int gJ;
 int cur_j;
+int cur_i;
 int node_count;
 int inter_node;
 int leafs;

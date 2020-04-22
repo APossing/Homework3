@@ -72,6 +72,7 @@ Node* Build_GSTree(char* l_seq, int start_ind[], int count)
 	pRoot = New_Node(-1, -1, 0, -1);
 	mix_colour = count + 1;
 	pRoot->colour = mix_colour;
+	pRoot->pPar = pRoot;
 	Node* exit_node = Insert_Sequence(l_seq, start_ind, count);
 
 	Colour_Tree(exit_node);
@@ -103,7 +104,13 @@ char* Get_Fingerprint(Node* node, int seq_num, int mix_colour)
 	fp->x = fp->y = -1;
 	srand(time(0));
 
-	return NULL;
+	Node* smallest_fp = Find_Fingerprint(node, seq_num, mix_colour);
+	if (Is_Root(smallest_fp) == true)
+		return NULL;
+	fp->x = smallest_fp->i - smallest_fp->sd;
+	fp->y = smallest_fp->i;
+
+	return fp;
 }
 
 Node* Find_Fingerprint(Node* node, int seq_num, int mix_colour)
@@ -111,42 +118,50 @@ Node* Find_Fingerprint(Node* node, int seq_num, int mix_colour)
 	if (node == NULL)
 		return NULL;
 
+	if (node->colour != mix_colour && node->colour != seq_num)
+	{
+		return Find_Fingerprint(node->pCh, seq_num, mix_colour);
+	}
+
+	Node* sib = Find_Fingerprint(node->pSib, seq_num, mix_colour);
+	Node* ch = NULL;
+	
 	if (node->colour == seq_num)
 	{
-		Node* sib = Find_Fingerprint(node->pSib, seq_num, mix_colour);
-
-		if (sib == NULL || sib->sd > node->sd)
-		{
+		if (sib == NULL)
 			return node;
-		}
-		else if (sib->sd < node->sd)
-		{
-			return sib;
-		}
-		else
-		{
-			int choice = rand() % 2;
-			if (choice == 0)
-			{
-				return node;
-			}
-			else
-				return sib;
-		}
+		ch = node;
 	}
-	else if (node->colour == mix_colour)
+	if (node->colour == mix_colour)
 	{
-		Node* ch = Find_Fingerprint(node->pCh, seq_num, mix_colour);
-		Node* sib = Find_Fingerprint(node->pSib, seq_num, mix_colour);
+		ch = Find_Fingerprint(node->pCh, seq_num, mix_colour);
 		if (ch == NULL && sib == NULL)
 			return NULL;
-		////////////////////////////////////////////////////////////////
-		//all the cases here!!!
-		////////////////////////////////////////////////////////////////
+
+		if (ch == NULL)
+			return sib;
+
+		if (sib == NULL)
+			return ch;
+	}
+
+	if (sib->sd > ch->sd)
+	{
+		return ch;
+	}
+	else if (sib->sd < ch->sd)
+	{
+		return sib;
 	}
 	else
 	{
-		return Find_Fingerprint(node->pCh, seq_num, mix_colour);
+		int choice = rand() % 2;
+		if (choice == 0)
+		{
+			return ch;
+		}
+		else
+			return sib;
 	}
 }
 
@@ -168,9 +183,10 @@ Node* Insert_Sequence(char* seq, int start_ind[], int count)
 	gSeq = seq;
 	seq_len = strlen(seq);
 	gJ = seq_len - 1;
-	int i = 0;					// Current insert index in sequence
-	int string_count = 0;
+	int i = 0;				// Current insert index in sequence
+	int string_count = 1;
 	tipping_point = start_ind[string_count];
+	cur_j = tipping_point - 1;
 	string_count++;
 	int j = gJ;	// Index of last char "$" in string
 	cur_colour = 1;
@@ -178,7 +194,7 @@ Node* Insert_Sequence(char* seq, int start_ind[], int count)
 	pRoot->sl = pRoot;
 
 	// First node is made and inserted into tree
-	Node* cur = New_Node(i, j, seq_len, leafs);
+	Node* cur = New_Node(i, cur_j, cur_j - i + 1, leafs);
 	cur->colour = 1;
 	leafs++;
 	pRoot->pCh = cur;
@@ -194,9 +210,20 @@ Node* Insert_Sequence(char* seq, int start_ind[], int count)
 	// Main loop in charge of inserting every suffix in sequence
 	while (i <= j)
 	{
+		cur_i = i;
 		if (i >= tipping_point && string_count < count)
 		{
+			cur = pRoot;
 			tipping_point = start_ind[string_count];
+			cur_j = tipping_point - 1;
+			string_count++;
+			cur_colour++;
+		}
+		else if (i >= tipping_point && string_count == count)
+		{
+			cur = pRoot;
+			tipping_point = gJ + 1;
+			cur_j = gJ;
 			string_count++;
 			cur_colour++;
 		}
@@ -284,7 +311,7 @@ Node* FindPath(Node* u, int i)
 	if (Find_Branch(cur->pCh, gSeq[i], &temp) == false)
 	{
 		// Create new leaf node
-		Node* new_leaf = New_Node(i, gJ, u->sd + (seq_len - i), leafs);
+		Node* new_leaf = New_Node(i, cur_j, cur_j - cur_i + 1 , leafs);
 		new_leaf->colour = cur_colour;
 		leafs++;
 		new_leaf->pPar = cur;			// Connects to parent
@@ -326,7 +353,7 @@ Node* FindPath(Node* u, int i)
 		}
 		else
 		{
-			Node* new_internal = New_Node(cur->i, j - 1, cur->sd - (cur->j - j + 1), seq_len + inter_node);
+			Node* new_internal = New_Node(cur->i, j - 1, j - cur_i, seq_len + inter_node);
 			new_internal->colour = cur_colour;
 			inter_node++;
 			new_internal->pCh = cur;
@@ -369,7 +396,7 @@ Node* NodeHops(Node* u, int i, int beta)
 			return NodeHops(cur, i + len, beta - len);
 		else // if beta ends early
 		{
-			Node* new_internal = New_Node(cur->i, cur->i + beta - 1, cur->pPar->sd + beta, seq_len + inter_node);
+			Node* new_internal = New_Node(cur->i, cur->i + beta - 1, cur->i + beta - cur_i, seq_len + inter_node);
 			new_internal->colour = cur_colour;
 			inter_node++;
 			new_internal->pCh = cur;

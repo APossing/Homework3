@@ -36,7 +36,7 @@ int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 			strcpy(l_seq, seq1);
 			strcat(l_seq, seq2);
 
-			int temp_seq[2] = {0, seqArray[i]->len_str+2};
+			int temp_seq[2] = {0, seqArray[i]->len_str+1};
 
 			Node* gstHead = Build_GSTree(l_seq, temp_seq, 2);
 
