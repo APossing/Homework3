@@ -64,15 +64,15 @@ bool Is_Root(Node* u)
 	return false;
 }
 
-Node* Build_GSTree(char* l_seq, char* str1, char* str2)
+Node* Build_GSTree(char* l_seq, int start_ind[], int count)
 {
 	seq_len = node_count = inter_node = leafs = 0;
 
 	// Create root node which isnt counted
 	pRoot = New_Node(-1, -1, 0, -1);
-	pRoot->colour = 3;
-	tipping_point = strlen(str1);
-	Node* exit_node = Insert_Sequence(l_seq);
+	mix_colour = count + 1;
+	pRoot->colour = mix_colour;
+	Node* exit_node = Insert_Sequence(l_seq, start_ind);
 
 	Colour_Tree(exit_node);
 
@@ -100,6 +100,7 @@ int Colour_Tree(Node* u)
 LcsCoordinate* Get_LCS(Node* node)
 {
 
+
 	LcsCoordinate* lcs = (LcsCoordinate*)malloc(sizeof(LcsCoordinate));
 	lcs->x1 = 2;
 	lcs->y1 = 3;
@@ -108,7 +109,12 @@ LcsCoordinate* Get_LCS(Node* node)
 	return lcs;
 }
 
-Node* Insert_Sequence(char* seq)
+Node* Find_LCS_Node(Node* node)
+{
+
+}
+
+Node* Insert_Sequence(char* seq, int start_ind[])
 {
 	gSeq = seq;
 	seq_len = strlen(seq);

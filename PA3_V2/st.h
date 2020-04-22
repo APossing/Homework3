@@ -38,6 +38,7 @@ typedef struct lcsCoordinate
 // Global variable that is a pointer top the root node
 Node* pRoot;
 char* gSeq;
+int mix_colour;
 int cur_colour;
 int tipping_point;
 int seq_len;
@@ -87,6 +88,8 @@ Node* Build_GSTree(char* l_seq, char* seq1, char* seq2);
 int Colour_Tree(Node* u);
 
 LcsCoordinate* Get_LCS(Node* node);
+
+Node* Find_LCS_Node(Node* node);
 
 // Description:
 //	This function is in charge of adding to the tree and

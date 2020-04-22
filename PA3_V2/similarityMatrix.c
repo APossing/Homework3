@@ -25,7 +25,7 @@ int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 			strcpy(l_seq, seq1);
 			strcat(l_seq, seq2);
 
-			Node* gstHead = Build_GSTree(l_seq, seq1, seq2);
+			Node* gstHead = Build_GSTree(l_seq, [0,1], 2);
 
 			
 			LcsCoordinate* lcs = Get_LCS(gstHead);
