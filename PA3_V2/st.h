@@ -35,6 +35,12 @@ typedef struct lcsCoordinate
 	int y2;
 } LcsCoordinate;
 
+typedef struct fingerprint
+{
+	int x;
+	int y;
+} Fingerprint;
+
 // Global variable that is a pointer top the root node
 Node* pRoot;
 char* gSeq;
@@ -43,6 +49,7 @@ int cur_colour;
 int tipping_point;
 int seq_len;
 int gJ;
+int cur_j;
 int node_count;
 int inter_node;
 int leafs;
@@ -83,9 +90,13 @@ bool Is_Leaf(Node* u);
 //	False if not a Root
 bool Is_Root(Node* u);
 
-Node* Build_GSTree(char* l_seq, char* seq1, char* seq2);
+Node* Build_GSTree(char* l_seq, int start_ind[], int count);
 
 int Colour_Tree(Node* u);
+
+char* Get_Fingerprint(Node* node, int seq_num, int mix_colour);
+
+Node* Find_Fingerprint(Node* node, int seq_num, int mix_colour);
 
 LcsCoordinate* Get_LCS(Node* node);
 
@@ -100,7 +111,7 @@ Node* Find_LCS_Node(Node* node);
 // Returns:
 //	Root Node passed back if build succesfull
 //	NUll pointer if build unsucessfull
-Node* Insert_Sequence(char* seq);
+Node* Insert_Sequence(char* seq, int start_ind[], int count);
 
 // Description:
 //	Step 3 of IA

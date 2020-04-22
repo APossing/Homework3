@@ -72,7 +72,7 @@ Node* Build_GSTree(char* l_seq, int start_ind[], int count)
 	pRoot = New_Node(-1, -1, 0, -1);
 	mix_colour = count + 1;
 	pRoot->colour = mix_colour;
-	Node* exit_node = Insert_Sequence(l_seq, start_ind);
+	Node* exit_node = Insert_Sequence(l_seq, start_ind, count);
 
 	Colour_Tree(exit_node);
 
@@ -86,27 +86,75 @@ int Colour_Tree(Node* u)
 
 	int new_colour = Colour_Tree(u->pCh);
 	if (new_colour != 0 && new_colour != u->colour)
-		u->colour = 3;
+		u->colour = mix_colour;
 
 	int colour = Colour_Tree(u->pSib);
-
-	// if both already mixed (colour 3), will stay like that
-	if (u->colour != colour)
-		colour = 3;
+	if (u->colour == mix_colour)
+		colour = mix_colour;
+	else if (u->colour != colour)
+		colour = mix_colour;
 
 	return colour;
 }
 
+char* Get_Fingerprint(Node* node, int seq_num, int mix_colour)
+{
+	Fingerprint* fp = (Fingerprint*)malloc(sizeof(Fingerprint));
+	fp->x = fp->y = -1;
+	srand(time(0));
+
+	return NULL;
+}
+
+Node* Find_Fingerprint(Node* node, int seq_num, int mix_colour)
+{
+	if (node == NULL)
+		return NULL;
+
+	Node* sib = NULL;
+	Node* ch = NULL;
+
+	sib = Find_Fingerprint(node->pSib, seq_num, mix_colour);
+	ch = Find_Fingerprint(node->pCh, seq_num, mix_colour);
+	
+
+	if (node->colour == seq_num)
+	{
+		if (sib->sd < node->sd)
+		{
+			return sib;
+		}
+		else if (sib->sd > node->sd)
+		{
+			return node;
+		}
+		else
+		{
+			int choice = rand() % 2;
+			if (choice == 0)
+			{
+				return node;
+			}
+			else
+				return sib;
+		}
+	}
+	else if (node->colour == mix_colour)
+	{
+		
+	}
+	else
+	{
+
+	}
+}
+
 LcsCoordinate* Get_LCS(Node* node)
 {
-
-
 	LcsCoordinate* lcs = (LcsCoordinate*)malloc(sizeof(LcsCoordinate));
-	lcs->x1 = 2;
-	lcs->y1 = 3;
-	lcs->x2 = 3;
-	lcs->y2 = 4;
-	return lcs;
+	lcs->x1 = lcs->y1 = lcs->x2 = lcs->y2 = -1;
+
+	return NULL;
 }
 
 Node* Find_LCS_Node(Node* node)
@@ -114,12 +162,15 @@ Node* Find_LCS_Node(Node* node)
 
 }
 
-Node* Insert_Sequence(char* seq, int start_ind[])
+Node* Insert_Sequence(char* seq, int start_ind[], int count)
 {
 	gSeq = seq;
 	seq_len = strlen(seq);
 	gJ = seq_len - 1;
 	int i = 0;					// Current insert index in sequence
+	int string_count = 0;
+	tipping_point = start_ind[string_count];
+	string_count++;
 	int j = gJ;	// Index of last char "$" in string
 	cur_colour = 1;
 	node_count = inter_node = leafs = 0; // Set everything to zero
@@ -142,8 +193,12 @@ Node* Insert_Sequence(char* seq, int start_ind[])
 	// Main loop in charge of inserting every suffix in sequence
 	while (i <= j)
 	{
-		if (i >= tipping_point)
-			cur_colour = 2;
+		if (i >= tipping_point && string_count < count)
+		{
+			tipping_point = start_ind[string_count];
+			string_count++;
+			cur_colour++;
+		}
 		//printf("Index %d\n", (i+1));
 		// Current is never root, its always the inserted node
 		u = cur->pPar;	// Step 1 (All Cases)
@@ -253,6 +308,15 @@ Node* FindPath(Node* u, int i)
 		{
 			i++;
 			j++;
+		}
+
+		// This case will almost never happen but if it does, it just means that
+		// That a string has ligned up in such a way that its end is an internal node
+		if (i == gJ)
+		{
+			if (cur_colour != cur->colour)
+				cur->colour = mix_colour;
+			return cur;
 		}
 
 		if (j > cur->j)
