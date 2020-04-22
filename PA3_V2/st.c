@@ -65,17 +65,17 @@ bool Is_Root(Node* u)
 	return false;
 }
 
-Node* Build_GSTree(char* str1, char* str2)
+Node* Build_GSTree(char* l_seq, char* str1, char* str2)
 {
-	Node* pRoot = NULL;
-	gSeq = NULL;
+	gSeq = l_seq;
+	gJ = strlen(gSeq) - 1;
 	seq_len = node_count = inter_node = leafs = 0;
 
 	// Create root node which isnt counted
 	pRoot = New_Node(-1, -1, 0, -1);
 	pRoot->colour = 3;
-	pRoot = Insert_Sequence(str1, pRoot, 1);
-	pRoot = Insert_Sequence(str2, pRoot, 2);
+	Insert_Sequence(str1, 1);
+	Insert_Sequence(str2, 2);
 
 	Colour_Tree(pRoot);
 
@@ -102,19 +102,22 @@ LcsCoordinate* Get_LCS(Node* node)
 	return NULL;
 }
 
-Node* Insert_Sequence(char* seq, Node* pRoot, int colour)
+Node* Insert_Sequence(char* seq, int colour)
 {
-	gSeq = seq;
+	cur_seq = seq;
 	seq_len = strlen(seq);
-	gJ = seq_len - 1;
-	int i = 0;					// Current insert index in sequence
-	int j = gJ;					// Index of last char "$" in string
 	seq_colour = colour;
 
 	Node* cur = NULL;
+	int i = 0;
+	int j = 0;
 
 	if (seq_colour == 1)			// If first sequence
 	{
+		cur_J = seq_len - 1;
+		i = 0;					// Current insert index in sequence
+		j = cur_J;				// Index of last char "$" in string
+
 		node_count = inter_node = leafs = 0; // Set everything to zero
 		pRoot->sl = pRoot;
 
@@ -123,12 +126,16 @@ Node* Insert_Sequence(char* seq, Node* pRoot, int colour)
 		cur->colour = seq_colour;
 		leafs++;
 		pRoot->pCh = cur;
+		pRoot->pPar = cur;
 		cur->pPar = pRoot;
 
 		i++;
 	}
 	else
 	{
+		i = cur_J + 1;					// Current insert index in sequence
+		cur_J = gJ;
+		j = gJ;				// Index of last char "$" in string
 		cur = pRoot;
 	}
 
@@ -220,7 +227,7 @@ Node* FindPath(Node* u, int i)
 	if (Find_Branch(cur->pCh, gSeq[i], &temp) == false)
 	{
 		// Create new leaf node
-		Node* new_leaf = New_Node(i, gJ, u->sd + (seq_len - i), leafs);
+		Node* new_leaf = New_Node(i, cur_J, u->sd + ((cur_J+1) - i), leafs);
 		new_leaf->colour = seq_colour;
 
 		leafs++;
@@ -259,7 +266,7 @@ Node* FindPath(Node* u, int i)
 		}
 		else
 		{
-			Node* new_internal = New_Node(cur->i, j - 1, cur->sd - (cur->j - j + 1), seq_len + inter_node);
+			Node* new_internal = New_Node(cur->i, j - 1, cur->sd - (cur->j - j + 1), gJ+1 + inter_node);
 			new_internal->colour = seq_colour;
 
 			inter_node++;
@@ -303,7 +310,7 @@ Node* NodeHops(Node* u, int i, int beta)
 			return NodeHops(cur, i + len, beta - len);
 		else // if beta ends early
 		{
-			Node* new_internal = New_Node(cur->i, cur->i + beta - 1, cur->pPar->sd + beta, seq_len + inter_node);
+			Node* new_internal = New_Node(cur->i, cur->i + beta - 1, cur->pPar->sd + beta, gJ + 1 + inter_node);
 			new_internal->colour = seq_colour;
 
 			inter_node++;

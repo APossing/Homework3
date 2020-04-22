@@ -38,8 +38,10 @@ typedef struct lcsCoordinate
 // Global variable that is a pointer top the root node
 Node* pRoot;
 char* gSeq;
+char* cur_seq;
 int seq_len;
 int gJ;
+int cur_J;
 int node_count;
 int inter_node;
 int leafs;
@@ -81,7 +83,7 @@ bool Is_Leaf(Node* u);
 //	False if not a Root
 bool Is_Root(Node* u);
 
-Node* Build_GSTree(char* seq1, char* seq2);
+Node* Build_GSTree(char* l_seq, char* seq1, char* seq2);
 
 int Colour_Tree(Node* u);
 
@@ -96,7 +98,7 @@ LcsCoordinate* Get_LCS(Node* node);
 // Returns:
 //	Root Node passed back if build succesfull
 //	NUll pointer if build unsucessfull
-Node* Insert_Sequence(char* seq, Node* pRoot, int colour);
+Node* Insert_Sequence(char* seq, int colour);
 
 // Description:
 //	Step 3 of IA
