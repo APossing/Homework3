@@ -175,7 +175,41 @@ LcsCoordinate* Get_LCS(Node* node)
 
 Node* Find_LCS_Node(Node* node)
 {
+	if (node == NULL)
+		return NULL;
 
+	if (node->colour != 3)
+	{
+		Node* sib = Find_LCS_Node(node->pSib);
+		
+		if (sib == NULL)
+			return NULL;
+
+		if (sib->colour == 3)
+			return NULL;
+
+		else return node;
+	}
+
+	return node;
+}
+
+void Print_Node(Node* node)
+{
+	printf("Node %d: i:%c --- j:%c | ", node->id, gSeq[node->i], gSeq[node->j]);
+	printf("Colour: % d | ", node->colour);
+	if (Is_Leaf(node) == true)
+	{
+		printf("Leaf Node\n");
+	}
+	else if(Is_Root(node) == true)
+	{
+		printf("Root Node\n");
+	}
+	else
+	{
+		printf("Internal Node\n");
+	}
 }
 
 Node* Insert_Sequence(char* seq, int start_ind[], int count)
@@ -206,6 +240,9 @@ Node* Insert_Sequence(char* seq, int start_ind[], int count)
 	Node* v = NULL;
 	Node* u_prime = NULL;	// u', no ' in c
 	Node* v_prime = NULL;	// v', no ' in c
+
+	Print_Node(pRoot);
+	Print_Node(cur);
 
 	// Main loop in charge of inserting every suffix in sequence
 	while (i <= j)
@@ -276,18 +313,21 @@ Node* Insert_Sequence(char* seq, int start_ind[], int count)
 
 Node* Case_IA(Node* v, int i, int alpha)
 {
+	printf("Case IA\n");
 	Node* cur = FindPath(v, i + alpha); // Step 3
 	return cur;
 }
 
 Node* Case_IB(Node* root, int i)
 {
+	printf("Case IB\n");
 	Node* cur = FindPath(root, i);		// Step 3
 	return cur;
 }
 
 Node* Case_IIA(Node* u, Node* v_prime, int i, int alpha_prime, int beta)
 {
+	printf("Case IIA\n");
 	Node* v = NodeHops(v_prime, i + alpha_prime, beta);	// Step 4
 	u->sl = v;								// Step 5
 	int alpha = alpha_prime + beta;
@@ -297,6 +337,7 @@ Node* Case_IIA(Node* u, Node* v_prime, int i, int alpha_prime, int beta)
 
 Node* Case_IIB(Node* u, Node* root, int i, int beta_prime)
 {
+	printf("Case IIB\n");
 	Node* v = NodeHops(root, i, beta_prime);// Step 4
 	u->sl = v;								// Step 5
 	Node* cur = FindPath(v, i + beta_prime);// Step 6
@@ -305,11 +346,14 @@ Node* Case_IIB(Node* u, Node* root, int i, int beta_prime)
 
 Node* FindPath(Node* u, int i)
 {
+	printf("Find Path at node\n");
+	Print_Node(u);
 	Node* cur = u;
 	Node* temp = NULL;
 
 	if (Find_Branch(cur->pCh, gSeq[i], &temp) == false)
 	{
+		printf("Creating New Leaf\n");
 		// Create new leaf node
 		Node* new_leaf = New_Node(i, cur_j, cur_j - cur_i + 1 , leafs);
 		new_leaf->colour = cur_colour;
@@ -325,10 +369,13 @@ Node* FindPath(Node* u, int i)
 			new_leaf->pSib = temp->pSib;// Moves sibling or null pointer to new leaf
 			temp->pSib = new_leaf;
 		}
+		Print_Node(new_leaf);
 		return new_leaf;				// New Leaf made and inserted, returned
 	}
 	else		// Child has needed branch;
 	{
+		printf("Branch Found\n");
+		Print_Node(temp);
 		cur = temp;
 		int j = cur->i;
 		// While i and j are within seq len and have the same char increment
@@ -342,6 +389,7 @@ Node* FindPath(Node* u, int i)
 		// That a string has ligned up in such a way that its end is an internal node
 		if (i >= gJ)
 		{
+			printf("String and leaf matched up\n");
 			if (cur_colour != cur->colour)
 				cur->colour = mix_colour;
 			return cur;
@@ -353,6 +401,7 @@ Node* FindPath(Node* u, int i)
 		}
 		else
 		{
+			printf("Mismatch, new node created");
 			Node* new_internal = New_Node(cur->i, j-1, cur->sd - (cur->j-(j-1)), seq_len + inter_node);
 			if (cur->colour != cur_colour)
 			{
@@ -382,6 +431,7 @@ Node* FindPath(Node* u, int i)
 				new_internal->pPar->pCh = new_internal;
 			}
 			cur->i = j;
+			Print_Node(new_internal);
 			return FindPath(new_internal, i);
 		}
 	}
@@ -389,6 +439,8 @@ Node* FindPath(Node* u, int i)
 
 Node* NodeHops(Node* u, int i, int beta)
 {
+	printf("Node hop on:\n");
+	Print_Node(u);
 	if (beta <= 0)
 		return u;
 
@@ -396,6 +448,8 @@ Node* NodeHops(Node* u, int i, int beta)
 	Node* temp = NULL;
 	if (Find_Branch(cur->pCh, gSeq[i], &temp) == true)
 	{
+		printf("Branch found\n");
+		Print_Node(temp);
 		cur = temp;
 		int len = cur->j - cur->i + 1;
 
@@ -403,6 +457,7 @@ Node* NodeHops(Node* u, int i, int beta)
 			return NodeHops(cur, i + len, beta - len);
 		else // if beta ends early
 		{
+			printf("Node Hop ended early, new node made\n");
 			Node* new_internal = New_Node(cur->i, cur->i + beta - 1, cur->pPar->sd + beta, seq_len + inter_node);
 			new_internal->colour = cur_colour;
 			inter_node++;
@@ -425,6 +480,7 @@ Node* NodeHops(Node* u, int i, int beta)
 				new_internal->pPar->pCh = new_internal;
 			}
 			cur->i = new_internal->j + 1;
+			Print_Node(new_internal);
 			return new_internal;
 		}
 	}

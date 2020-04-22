@@ -110,6 +110,8 @@ LcsCoordinate* Get_LCS(Node* node);
 
 Node* Find_LCS_Node(Node* node);
 
+void Print_Node(Node* node);
+
 // Description:
 //	This function is in charge of adding to the tree and
 //	building it up
