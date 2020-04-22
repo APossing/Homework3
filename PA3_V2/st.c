@@ -340,7 +340,7 @@ Node* FindPath(Node* u, int i)
 
 		// This case will almost never happen but if it does, it just means that
 		// That a string has ligned up in such a way that its end is an internal node
-		if (i == gJ)
+		if (i >= gJ)
 		{
 			if (cur_colour != cur->colour)
 				cur->colour = mix_colour;
