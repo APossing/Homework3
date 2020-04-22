@@ -353,7 +353,7 @@ Node* FindPath(Node* u, int i)
 		}
 		else
 		{
-			Node* new_internal = New_Node(cur->i, j-1, cur->i - j + 2, seq_len + inter_node);
+			Node* new_internal = New_Node(cur->i, j-1, cur->sd - (cur->j-(j-1)), seq_len + inter_node);
 			if (cur->colour != cur_colour)
 			{
 				new_internal->colour = mix_colour;
@@ -403,7 +403,7 @@ Node* NodeHops(Node* u, int i, int beta)
 			return NodeHops(cur, i + len, beta - len);
 		else // if beta ends early
 		{
-			Node* new_internal = New_Node(cur->i, cur->i + beta - 1, cur->i + beta - cur_i, seq_len + inter_node);
+			Node* new_internal = New_Node(cur->i, cur->i + beta - 1, cur->pPar->sd + beta, seq_len + inter_node);
 			new_internal->colour = cur_colour;
 			inter_node++;
 			new_internal->pCh = cur;
