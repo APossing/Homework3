@@ -9,7 +9,6 @@ typedef struct dP_cell {
 	int substitutionScore;
 	int deletionScore;
 	int insertionScore;
-	int matches;
 } DP_cell;
 
 enum Direction

@@ -96,9 +96,9 @@ int GetAlignmentValue(char* s1, int s1Length, char* s2, int s2Length, int h, int
 		for (int col = 0; col <= s2Length; col++)
 			CalculateCell(row, col, h, g, match, mismatch, table, s1, s2);
 
+	PrintTable(table, s1Length + 1, s2Length + 1);
 	return TraceBackGlobal(s1Length, s2Length,s1, s2, table, h);
 	
-	PrintTable(table, s1Length + 1, s2Length + 1);
 }
 
 void PrintTable(DP_cell** table, int rows, int cols)
@@ -133,7 +133,7 @@ FullCellList* GetMaxAdjacentCells(int row, int col, enum Direction prevDirection
 		cell->insertionScore += h;
 		cell->substitutionScore += h;
 	}
-	const int max = GetCellMax(cell);
+	int max = GetCellMax(cell);
 
 	if (row == 0 && col == 0)
 		return init_full_cell_list();
@@ -143,9 +143,7 @@ FullCellList* GetMaxAdjacentCells(int row, int col, enum Direction prevDirection
 		cell->cell = &table[row][col - 1];
 		cell->col = col - 1;
 		cell->row = row;
-		cell->max = max;
-		insert_cell(maxAdjacentSquares, cell);
-
+		cell->max = GetCellMax(cell->cell);
 		insert_cell(maxAdjacentSquares, cell);
 		return maxAdjacentSquares;
 	}
@@ -155,7 +153,7 @@ FullCellList* GetMaxAdjacentCells(int row, int col, enum Direction prevDirection
 		cell->cell = &table[row - 1][col];
 		cell->col = col;
 		cell->row = row - 1;
-		cell->max = max;
+		cell->max = GetCellMax(cell->cell);
 		insert_cell(maxAdjacentSquares, cell);
 		return maxAdjacentSquares;
 	}
@@ -165,7 +163,7 @@ FullCellList* GetMaxAdjacentCells(int row, int col, enum Direction prevDirection
 		cell->cell = &table[row - 1][col];
 		cell->col = col;
 		cell->row = row - 1;
-		cell->max = max;
+		cell->max = GetCellMax(cell->cell);
 		insert_cell(maxAdjacentSquares, cell);
 	}
 	if (cell->insertionScore == max)
@@ -174,7 +172,7 @@ FullCellList* GetMaxAdjacentCells(int row, int col, enum Direction prevDirection
 		cell->cell = &table[row][col - 1];
 		cell->col = col - 1;
 		cell->row = row;
-		cell->max = max;
+		cell->max = GetCellMax(cell->cell);
 		insert_cell(maxAdjacentSquares, cell);
 	}
 	if (cell->substitutionScore == max)
@@ -183,7 +181,7 @@ FullCellList* GetMaxAdjacentCells(int row, int col, enum Direction prevDirection
 		cell->cell = &table[row - 1][col - 1];
 		cell->col = col - 1;
 		cell->row = row - 1;
-		cell->max = max;
+		cell->max = GetCellMax(cell->cell);
 		insert_cell(maxAdjacentSquares, cell);
 	}
 
@@ -231,8 +229,11 @@ int TraceBackGlobalLean(int row, int col, DP_cell** table, int h)
 
 int TraceBackGlobal(int row, int col, char* s1, char* s2, DP_cell** table, int h)
 {
+	if (row <= 0 || col <= 0)
+		return 0;
+	
 	DP_CellFull* mainMaxCell = malloc(sizeof(DP_CellFull));
-	mainMaxCell->max = -1;
+	mainMaxCell->max = INT_MIN;
 	int maxCellSubs = 0;
 	char* s1Final = malloc(sizeof(char) * (row+1));
 	int s1FinalPos = row;
@@ -254,7 +255,8 @@ int TraceBackGlobal(int row, int col, char* s1, char* s2, DP_cell** table, int h
 			s1Final[s1FinalPos--] = s1[row - 1];
 			s2Final[s2FinalPos--] = s2[col - 1];
 			prevDirection = diag;
-			maxCellSubs++;
+			if (s1[row - 1] == s2[col - 1])
+				maxCellSubs++;
 		}
 		else if (maxCell->row < row)
 		{
@@ -273,7 +275,7 @@ int TraceBackGlobal(int row, int col, char* s1, char* s2, DP_cell** table, int h
 		row = maxCell->row;
 		col = maxCell->col;
 		//AddPointsToAlignment(row, col, alignment); we dont care anymore
-	} while (row != 0 || col != 0);
+	} while (row > 0 || col > 0);
 
 	return maxCellSubs;
 }

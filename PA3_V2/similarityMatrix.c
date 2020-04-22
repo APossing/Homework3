@@ -25,12 +25,22 @@ int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 
 			Node* gstHead = Build_GSTree(l_seq, seq1, seq2);
 
+			
 			LcsCoordinate* lcs = Get_LCS(gstHead);
 
 			//your stuff here
-			int A = GetAlignmentValue("ACATGC", 6, "ACACT", 5, -5, -2, 1, -2);
-			int B = lcs->x2-lcs->x1;
-			int C = GetAlignmentValue("ACATGC", 6, "ACACT", 5, -5, -2, 1, -2);;
+			char* s1StartReversed = Get_String_Reverse(seq1, lcs->x1);
+			char* s2StartReversed = Get_String_Reverse(seq2, lcs->y1);
+			int A = GetAlignmentValue(s1StartReversed, lcs->x1, s2StartReversed, lcs->y1, -5, -2, 1, -2);
+			
+			int B = lcs->x2-lcs->x1+1;
+			
+			char* s1EndStart = seq1 + lcs->x2 + 1;
+			int s1EndStartLength = seqArray[i]->len_str - lcs->x2-1;
+			char* s2EndStart = seq2 + lcs->y2 + 1;
+			int s2EndStartLength = seqArray[j]->len_str - lcs->y2-1;
+			
+			int C = GetAlignmentValue(s1EndStart,s1EndStartLength ,s2EndStart ,s2EndStartLength, -5, -2, 1, -2);;
 
 			//insert a value into matrix
 			similarityMatix[(j*(j - 1) / 2) + i] = A+B+C;
@@ -60,4 +70,14 @@ void Print_Simularity_Matrix(int* matrix, int seqNum)
 		}
 		printf("\n");
 	}
+}
+
+char* Get_String_Reverse(char* str, int length)
+{
+	char* returnStr = malloc(sizeof(char) * length);
+	for(int i = length-1; i >= 0; i--)
+	{
+		returnStr[length - 1 - i] = str[i];
+	}
+	return returnStr;
 }
