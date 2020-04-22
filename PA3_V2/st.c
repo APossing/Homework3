@@ -203,7 +203,28 @@ Node* Find_LCS_Node(Node* node)
 
 void Print_Node(Node* node)
 {
-	printf("Node %d: i:%c --- j:%c | ", node->id, gSeq[node->i], gSeq[node->j]);
+	switch (node->colour)
+	{
+	case 1:
+		printf("\033[1;31m");
+		break;
+	case 2:
+		printf("\033[1;32m");
+		break;
+	case 3:
+		printf("\033[1;33m");
+		break;
+	case 4:
+		printf("\033[1;34m");
+		break;
+	case 5:
+		printf("\033[1;35m");
+		break;
+	case 6:
+		printf("\033[1;36m");
+		break;
+	}
+	printf("Node %d: %d:%c --- %d:%c | ", node->id, node->i, gSeq[node->i], node->j, gSeq[node->j]);
 	printf("Colour: % d | ", node->colour);
 	if (Is_Leaf(node) == true)
 	{
@@ -218,6 +239,7 @@ void Print_Node(Node* node)
 		printf("Internal Node | ");
 	}
 	printf("SDepth: %d\n", node->sd);
+	printf("\033[0m");
 }
 
 Node* Insert_Sequence(char* seq, int start_ind[], int count)
@@ -255,7 +277,6 @@ Node* Insert_Sequence(char* seq, int start_ind[], int count)
 	// Main loop in charge of inserting every suffix in sequence
 	while (i <= j)
 	{
-		printf("\nInserting i:%d --- j:%d | %c -- %c\n", i, j, gSeq[i], gSeq[j]);
 		cur_i = i;
 		if (i >= tipping_point && string_count < count)
 		{
@@ -273,6 +294,7 @@ Node* Insert_Sequence(char* seq, int start_ind[], int count)
 			string_count++;
 			cur_colour++;
 		}
+		printf("\nInserting i:%d --- j:%d | %c -- %c\n", i, cur_j, gSeq[i], gSeq[j]);
 		//printf("Index %d\n", (i+1));
 		// Current is never root, its always the inserted node
 		u = cur->pPar;	// Step 1 (All Cases)
@@ -394,9 +416,9 @@ Node* FindPath(Node* u, int i)
 			j++;
 		}
 
-		// This case will almost never happen but if it does, it just means that
-		// That a string has ligned up in such a way that its end is an internal node
-		if (i >= gJ)
+		// This case  means that
+		//  string has ligned up in such a way that its end is an internal node
+		if ((i-1) == cur_j)
 		{
 			printf("String and leaf matched up\n");
 			if (cur_colour != cur->colour)
