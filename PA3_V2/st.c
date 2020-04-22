@@ -112,20 +112,20 @@ int Colour_Tree(Node* u)
 	return colour;
 }
 
-char* Get_Fingerprint(Node* node, int seq_num, int mix_colour)
-{
-	Fingerprint* fp = (Fingerprint*)malloc(sizeof(Fingerprint));
-	fp->x = fp->y = -1;
-	srand(time(0));
-
-	Node* smallest_fp = Find_Fingerprint(node, seq_num, mix_colour);
-	if (Is_Root(smallest_fp) == true)
-		return NULL;
-	fp->x = smallest_fp->i - smallest_fp->sd;
-	fp->y = smallest_fp->i;
-
-	return fp;
-}
+//char* Get_Fingerprint(Node* node, int seq_num, int mix_colour)
+//{
+//	Fingerprint* fp = (Fingerprint*)malloc(sizeof(Fingerprint));
+//	fp->x = fp->y = -1;
+//	srand(time(0));
+//
+//	Node* smallest_fp = Find_Fingerprint(node, seq_num, mix_colour);
+//	if (Is_Root(smallest_fp) == true)
+//		return NULL;
+//	fp->x = smallest_fp->i - smallest_fp->sd;
+//	fp->y = smallest_fp->i;
+//
+//	return fp;
+//}
 
 Node* Find_Fingerprint(Node* node, int seq_num, int mix_colour)
 {
@@ -816,37 +816,73 @@ void Exact_Match_Repeat(Node* u, FILE* fp)
 
 
 
-void GetFingerPrints(Node* curNode, AdamFingerprint* fingerprints, int mixedColor)
+void GetFingerPrints(Node* curNode, Fingerprint* fingerprints, int mixedColor)
 {
 	if (curNode == NULL)
 		return;
-	if (curNode->pCh == NULL)
+	if (curNode->colour != mixedColor)
 	{
-		if (curNode->colour == mixedColor)
-			return;
-		
-		int endOfEdge = curNode->j;
-		int color = curNode->colour;
-		while (curNode != NULL && curNode->colour == color)
+		int firstChar = curNode->i;
+		int fingerPrintLocation = curNode->colour - 1;
+		Node* tempNode = curNode->pPar;
+		if (tempNode->j == -1)
 		{
-			curNode = curNode->pPar;
+			fingerprints[fingerPrintLocation].pHead = malloc(sizeof(NodeListNode));
+			fingerprints[fingerPrintLocation].pHead->myNode = curNode;
+			fingerprints[fingerPrintLocation].pHead->pNext = NULL;
+			fingerprints[fingerPrintLocation].size = 1;
 		}
-		curNode = curNode->pCh;
-		int strLen = endOfEdge - curNode->i;
-		if (strLen > fingerprints[color-1].count)
+		else //if not the root
 		{
-			fingerprints[color-1].count = strLen;
-			fingerprints[color-1].startNode = curNode;
+			NodeListNode* nodeListHead = malloc(sizeof(NodeListNode));
+			nodeListHead->myNode = curNode;
+			nodeListHead->pNext = NULL;
+
+			int size = 1;
+			while (tempNode->i != -1) //while not the root
+			{
+				NodeListNode* newNode = malloc(sizeof(NodeListNode));
+				newNode->myNode = tempNode;
+				newNode->pNext = NULL;
+				if (nodeListHead != NULL)
+				{
+					newNode->pNext = nodeListHead;
+					nodeListHead = newNode;
+					size += tempNode->j - tempNode->i + 1;
+				}
+				tempNode = tempNode->pPar;
+			}
+			if (size < fingerprints[fingerPrintLocation].size)
+			{
+				NodeListNode* curNode = fingerprints[fingerPrintLocation].pHead;
+				NodeListNode* nextNode = NULL;
+				while (curNode != NULL && curNode->myNode != NULL)
+				{
+					nextNode = curNode->pNext;
+					free(curNode);
+					curNode = nextNode;
+				}
+				fingerprints[fingerPrintLocation].pHead = nodeListHead;
+				fingerprints[fingerPrintLocation].size = size;
+			}
+			else
+			{
+				NodeListNode* curNode = nodeListHead;
+				NodeListNode* nextNode = NULL;
+				while (curNode != NULL && curNode->myNode != NULL)
+				{
+					nextNode = curNode->pNext;
+					free(curNode);
+					curNode = nextNode;
+				}
+			}
 		}
 	}
 	else
 	{
-		do
-		{
-			GetFingerPrints(curNode->pCh, fingerprints, mixedColor);
-			curNode = curNode->pSib;
-		} while (curNode != NULL);
+		GetFingerPrints(curNode->pCh, fingerprints, mixedColor);
 	}
+	GetFingerPrints(curNode->pSib, fingerprints, mixedColor);
 }
 
 void Tree_Detailed_Print(Node* node, int depth)

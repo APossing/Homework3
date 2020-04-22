@@ -35,10 +35,17 @@ typedef struct lcsCoordinate
 	int y2;
 } LcsCoordinate;
 
+typedef struct nodeListNode
+{
+	Node* myNode;
+	struct nodeListNode* pNext;
+}NodeListNode;
+
 typedef struct fingerprint
 {
-	int x;
-	int y;
+	char* str;
+	int size;
+	NodeListNode* pHead;
 } Fingerprint;
 
 typedef struct adamFingerprint
@@ -283,7 +290,7 @@ Node* Deepest_Internal_Node(Node* u);
 
 void Exact_Match_Repeat(Node* u, FILE* fp);
 
-void GetFingerPrints(Node* curNode, AdamFingerprint* fingerprints, int mixedColor);
+void GetFingerPrints(Node* curNode, Fingerprint* fingerprints, int mixedColor);
 
 void Tree_Detailed_Print(Node* node, int depth);
 
