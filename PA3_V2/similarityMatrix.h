@@ -18,8 +18,16 @@ typedef struct concatSequence
 	int strLength;
 } ConcatSequence;
 
-int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum);
-void Print_Simularity_Matrix(int* matrix, int seqNum);
+typedef struct simValue
+{
+	int A;
+	int B;
+	int C;
+	int Total;
+}SimValue;
+
+SimValue* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum);
+void Print_Simularity_Matrix(SimValue* matrix, int seqNum);
 char* Get_String_Reverse(char* str, int length);
 ConcatSequence* BuildConcatSequence(Sequence** seqArray, int seqNum);
 #endif

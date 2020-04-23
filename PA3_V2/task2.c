@@ -17,6 +17,7 @@ DP_cell* FillInCell(int row, int col, int subScore, int delScore, int insScore, 
 	table[row][col].substitutionScore = subScore;
 	table[row][col].deletionScore = delScore;
 	table[row][col].insertionScore = insScore;
+	table[row][col].isSet = true;
 	return &table[row][col];
 }
 
@@ -57,12 +58,17 @@ int GetMaxSubScore(int row, int col, int h, int g, int match, int mismatch, DP_c
 		matchScore = match;
 
 	DP_cell* diagCell = GetCalculatedCell(row - 1, col - 1, h, g, match, mismatch, table, s1, s2);
-
+	while (!diagCell->isSet)
+	{
+	}
 	return GetCellMax(diagCell) + matchScore;
 }
 int GetMaxDeletionScore(int row, int col, int h, int g, int match, int mismatch, DP_cell** table, char* s1, char* s2)
 {
 	DP_cell* upCell = GetCalculatedCell(row - 1, col, h, g, match, mismatch, table, s1, s2);
+	while (!upCell->isSet)
+	{
+	}
 	int max = upCell->deletionScore + g;
 
 	if (upCell->insertionScore + h + g > max)
@@ -76,6 +82,9 @@ int GetMaxDeletionScore(int row, int col, int h, int g, int match, int mismatch,
 int GetMaxInsertionScore(int row, int col, int h, int g, int match, int mismatch, DP_cell** table, char* s1, char* s2)
 {
 	DP_cell* leftCell = GetCalculatedCell(row, col - 1, h, g, match, mismatch, table, s1, s2);
+	while (!leftCell->isSet)
+	{
+	}
 	int max = leftCell->deletionScore + h + g;
 
 	if (leftCell->insertionScore + g > max)
@@ -109,6 +118,43 @@ int GetAlignmentValue(char* s1, int s1Length, char* s2, int s2Length, int h, int
 	
 }
 
+int GetAlignmentValueParallel(char* s1, int s1Length, char* s2, int s2Length, int h, int g, int match, int mismatch)
+{
+	DP_cell** table = (DP_cell**)malloc(sizeof(DP_cell*) * (s1Length + 1));
+	for (int i = 0; i < s1Length + 1; i++)
+	{
+		table[i] = (DP_cell*)malloc(sizeof(DP_cell) * (s2Length + 1));
+		for (int j = 0; j < s2Length + 1; j++)
+		{
+			table[i][j].isSet = false;
+		}
+	}
+	omp_set_num_threads(12);
+	printf("\nmax threads: %d\n", omp_get_max_threads());
+#pragma omp parallel for schedule(dynamic, 1)
+	for (int row = 0; row < s1Length+1; row++)
+	{
+		//printf("%d", omp_get_thread_num());
+		for (int col = 0; col <= s2Length; col++)
+		{
+			CalculateCell(row, col, h, g, match, mismatch, table, s1, s2);
+		}
+	}
+
+
+	//PrintTable(table, s1Length + 1, s2Length + 1);
+
+	int value = TraceBackGlobal(s1Length, s2Length, s1, s2, table, h);
+
+	for (int i = 0; i < s1Length + 1; i++)
+	{
+		free(table[i]);
+	}
+
+	return value;
+
+}
+
 void PrintTable(DP_cell** table, int rows, int cols)
 {
 	printf("\n");
@@ -131,6 +177,7 @@ FullCellList* GetMaxAdjacentCells(int row, int col, enum Direction prevDirection
 	cell->deletionScore = table[row][col].deletionScore;
 	cell->insertionScore = table[row][col].insertionScore;
 	cell->substitutionScore = table[row][col].substitutionScore;
+	cell->isSet = table[row][col].isSet;
 	if (prevDirection == left)
 	{
 		cell->deletionScore += h;

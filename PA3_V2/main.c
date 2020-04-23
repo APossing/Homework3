@@ -10,6 +10,7 @@ int main(int argc, const char* argv[])
 
     for (int i = 0; i < params->inputFileCount; i++)
     {
+        printf("processing file %d\n", i);
         Sequence* sequence = get_sequence(params->inputFileNames[i]);
         clean_dna_seq(sequence);
         seqArray[i] = sequence;

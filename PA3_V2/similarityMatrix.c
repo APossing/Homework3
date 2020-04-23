@@ -1,44 +1,45 @@
 #include "similarityMatrix.h"
 
-int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
+SimValue* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 {
 	ConcatSequence* c = BuildConcatSequence(seqArray, seqNum);
 
-	int* similarityMatix = malloc(sizeof(int) * (seqNum * (seqNum - 1) / 2));
+	SimValue* similarityMatix = malloc(sizeof(SimValue) * (seqNum * (seqNum - 1) / 2));
 
-	//Node* root = Build_GSTree(c->str, c->starIndexes, c->starIndexCount);
+	Node* root = Build_GSTree(c->str, c->starIndexes, c->starIndexCount);
 
-	//Fingerprint* fingerPrints = malloc(sizeof(Fingerprint) * seqNum);
-	//for (int i = 0; i < seqNum; i++)
-	//{
-	//	fingerPrints[i].size = INT_MAX;
-	//	fingerPrints[i].pHead = NULL;
-	//	fingerPrints[i].sequence = seqArray[i];
-	//}
-	//
-	//GetFingerPrints(root, fingerPrints, mix_colour);
+	Fingerprint* fingerPrints = malloc(sizeof(Fingerprint) * seqNum);
+	for (int i = 0; i < seqNum; i++)
+	{
+		fingerPrints[i].size = INT_MAX;
+		fingerPrints[i].pHead = NULL;
+		fingerPrints[i].sequence = seqArray[i];
+	}
+	
+	GetFingerPrints(root, fingerPrints, mix_colour);
 
-	//for (int i = 0; i < seqNum; i++)
-	//{
-	//	fingerPrints[i].str = malloc(sizeof(char) * fingerPrints[i].size+1);
-	//	NodeListNode* curNode = fingerPrints[i].pHead;
-	//	int curLocation = 0;
-	//	while (curNode->pNext != NULL)
-	//	{
-	//		for (int j = curNode->myNode->i; j <= curNode->myNode->j; j++)
-	//			fingerPrints[i].str[curLocation++] = c->str[j];
-	//		curNode = curNode->pNext;
-	//	}
-	//	fingerPrints[i].str[curLocation++] = c->str[curNode->myNode->i];
-	//	fingerPrints[i].str[curLocation++] = '\0';
-	//	int b = 5;
-	//}
-	//Destroy_Tree(root);
+	for (int i = 0; i < seqNum; i++)
+	{
+		fingerPrints[i].str = malloc(sizeof(char) * fingerPrints[i].size+1);
+		NodeListNode* curNode = fingerPrints[i].pHead;
+		int curLocation = 0;
+		while (curNode->pNext != NULL)
+		{
+			for (int j = curNode->myNode->i; j <= curNode->myNode->j; j++)
+				fingerPrints[i].str[curLocation++] = c->str[j];
+			curNode = curNode->pNext;
+		}
+		fingerPrints[i].str[curLocation++] = c->str[curNode->myNode->i];
+		fingerPrints[i].str[curLocation++] = '\0';
+		int b = 5;
+	}
+	Destroy_Tree(root);
 
 	for (int i = 0; i < seqNum; i++)
 	{
 		for (int j = i + 1; j < seqNum; j++)
 		{
+			printf("Alignment %d:%d\n", i, j);
 			char* seq1 = (char*)malloc((seqArray[i]->len_str + 2) * sizeof(char));
 			char* seq2 = (char*)malloc((seqArray[j]->len_str + 2) * sizeof(char));
 
@@ -71,23 +72,26 @@ int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 			int s2EndStartLength = seqArray[j]->len_str - (lcs->y2 - temp_seq[1] + 1);
 			
 			
-			int A = GetAlignmentValue(s1StartReversed, lcs->x1 - 1, s2StartReversed, lcs->y1 - temp_seq[1] - 1, -5, -2, 1, -2);
+			int A = GetAlignmentValueParallel(s1StartReversed, lcs->x1 - 1, s2StartReversed, lcs->y1 - temp_seq[1] - 1, -5, -2, 1, -2);
 			int B = lcs->x2 - lcs->x1 + 1;
 
-			int C = GetAlignmentValue(s1EndStart, s1EndStartLength, s2EndStart, s2EndStartLength, -5, -2, 1, -2);;
+			int C = GetAlignmentValueParallel(s1EndStart, s1EndStartLength, s2EndStart, s2EndStartLength, -5, -2, 1, -2);;
 
 			//insert a value into matrix
-			similarityMatix[(j * (j - 1) / 2) + i] = A + B + C;
+			similarityMatix[(j * (j - 1) / 2) + i].A = A;
+			similarityMatix[(j * (j - 1) / 2) + i].B = B;
+			similarityMatix[(j * (j - 1) / 2) + i].C = C;
+			similarityMatix[(j * (j - 1) / 2) + i].Total = A + B + C;
 			Destroy_Tree(gstHead);
 		}
 	}
-
+	Print_Simularity_Matrix(similarityMatix, seqNum);
 	return similarityMatix;
 	//should return a matrix or should output it, or what ever XD
 }
 
 
-void Print_Simularity_Matrix(int* matrix, int seqNum)
+void Print_Simularity_Matrix(SimValue* matrix, int seqNum)
 {
 	printf("\n");
 	printf("\n");
@@ -98,10 +102,10 @@ void Print_Simularity_Matrix(int* matrix, int seqNum)
 	printf("\n");
 	for (int i = 1; i < seqNum; i++)
 	{
-		printf("S%d", i);
+		printf("S%d\t", i);
 		for (int j = 0; j < i; j++)
 		{
-			printf("%d\t", matrix[(i * (i - 1) / 2) + j]);
+			printf("(%d,%d,%d,%d)\t", matrix[(i * (i - 1) / 2) + j].A, matrix[(i * (i - 1) / 2) + j].B, matrix[(i * (i - 1) / 2) + j].C, matrix[(i * (i - 1) / 2) + j].Total);
 		}
 		printf("\n");
 	}
