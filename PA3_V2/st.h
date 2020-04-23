@@ -46,14 +46,8 @@ typedef struct fingerprint
 	char* str;
 	int size;
 	NodeListNode* pHead;
+	Sequence* sequence;
 } Fingerprint;
-
-typedef struct adamFingerprint
-{
-	int count;
-	Node* startNode;
-	char* str;
-} AdamFingerprint;
 
 // Global variable that is a pointer top the root node
 Node* pRoot;

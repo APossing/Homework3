@@ -8,11 +8,12 @@ int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 	
 	Node* root = Build_GSTree(c->str, c->starIndexes, c->starIndexCount);
 
-	Fingerprint* fingerPrints = malloc(sizeof(AdamFingerprint) * seqNum);
+	Fingerprint* fingerPrints = malloc(sizeof(Fingerprint) * seqNum);
 	for (int i = 0; i < seqNum; i++)
 	{
 		fingerPrints[i].size = INT_MAX;
 		fingerPrints[i].pHead = NULL;
+		fingerPrints[i].sequence = seqArray[i];
 	}
 	
 	GetFingerPrints(root, fingerPrints, mix_colour);
@@ -30,6 +31,7 @@ int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 		}
 		fingerPrints[i].str[curLocation++] = c->str[curNode->myNode->i];
 		fingerPrints[i].str[curLocation++] = '\0';
+		int b = 5;
 	}
 		
 	

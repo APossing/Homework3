@@ -853,6 +853,8 @@ void GetFingerPrints(Node* curNode, Fingerprint* fingerprints, int mixedColor)
 					size += tempNode->j - tempNode->i + 1;
 				}
 				tempNode = tempNode->pPar;
+				if (size > fingerprints[fingerPrintLocation].size)
+					break;
 			}
 			if (size < fingerprints[fingerPrintLocation].size)
 			{
