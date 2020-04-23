@@ -9,7 +9,9 @@ Parameters* get_parameters(int argc, const char* argv[])
 	Parameters* params = (Parameters*)malloc(sizeof(Parameters));
 	params->inputFileCount = argc - 4;
 	params->inputFileNames = malloc(sizeof(char*) * params->inputFileCount);
-
+	params->threads = omp_get_num_procs() - 2;
+	if (params->threads < 1)
+		params->threads = 1;
 	for (int i = 1; i < argc;)
 	{
 		if (argv[i][0] == '-')
@@ -32,6 +34,12 @@ Parameters* get_parameters(int argc, const char* argv[])
 					j++;
 					i++;
 				}
+			}
+			else if (argv[i][1] == 't' || argv[i][1] == 'T')
+			{
+				i++;
+				params->threads = atoi(argv[i]);
+				i++;
 			}
 		}
 	}

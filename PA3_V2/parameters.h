@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdlib.h>
+#include <omp.h>
 #pragma warning(disable:4996)
 
 typedef struct parameters
@@ -10,6 +11,7 @@ typedef struct parameters
 	int inputFileCount;
 	char** inputFileNames;
 	char* alphabetFileName;
+	int threads;
 
 } Parameters;
 

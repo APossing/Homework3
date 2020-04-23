@@ -15,7 +15,7 @@ int main(int argc, const char* argv[])
         clean_dna_seq(sequence);
         seqArray[i] = sequence;
     }
-    Compute_Similarity_Matrix(seqArray, params->inputFileCount);
+    Compute_Similarity_Matrix(seqArray, params->inputFileCount, params->threads);
 	
     return 0;
 }

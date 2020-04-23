@@ -12,8 +12,6 @@ int GetCellMax(DP_cell* cell)
 
 DP_cell* FillInCell(int row, int col, int subScore, int delScore, int insScore, DP_cell* table[])
 {
-	//if (!IsValidCell(row, col))
-	//	return nullptr;
 	table[row][col].substitutionScore = subScore;
 	table[row][col].deletionScore = delScore;
 	table[row][col].insertionScore = insScore;
@@ -41,14 +39,10 @@ DP_cell* CalculateCell(int row, int col, int h, int g, int match, int mismatch, 
 
 DP_cell* GetCalculatedCell(int row, int col, int h, int g, int match, int mismatch, DP_cell** table, char* s1, char* s2)
 {
-	//if (table->IsValidCell(row, col))
-	//{
 	DP_cell* cell = &table[row][col];
 	if (cell == NULL)
 		cell = CalculateCell(row, col, h, g, match, mismatch, table, s1, s2);
 	return cell;
-	//}
-	//return nullptr;
 }
 
 int GetMaxSubScore(int row, int col, int h, int g, int match, int mismatch, DP_cell** table, char* s1, char* s2)
@@ -118,7 +112,7 @@ int GetAlignmentValue(char* s1, int s1Length, char* s2, int s2Length, int h, int
 	
 }
 
-int GetAlignmentValueParallel(char* s1, int s1Length, char* s2, int s2Length, int h, int g, int match, int mismatch)
+int GetAlignmentValueParallel(char* s1, int s1Length, char* s2, int s2Length, int h, int g, int match, int mismatch, int threads)
 {
 	DP_cell** table = (DP_cell**)malloc(sizeof(DP_cell*) * (s1Length + 1));
 	for (int i = 0; i < s1Length + 1; i++)
@@ -129,20 +123,15 @@ int GetAlignmentValueParallel(char* s1, int s1Length, char* s2, int s2Length, in
 			table[i][j].isSet = false;
 		}
 	}
-	omp_set_num_threads(12);
-	printf("\nmax threads: %d\n", omp_get_max_threads());
-#pragma omp parallel for schedule(dynamic, 1)
+	omp_set_num_threads(threads);
+	#pragma omp parallel for schedule(dynamic, 1)
 	for (int row = 0; row < s1Length+1; row++)
 	{
-		//printf("%d", omp_get_thread_num());
 		for (int col = 0; col <= s2Length; col++)
 		{
 			CalculateCell(row, col, h, g, match, mismatch, table, s1, s2);
 		}
 	}
-
-
-	//PrintTable(table, s1Length + 1, s2Length + 1);
 
 	int value = TraceBackGlobal(s1Length, s2Length, s1, s2, table, h);
 
@@ -244,45 +233,6 @@ FullCellList* GetMaxAdjacentCells(int row, int col, enum Direction prevDirection
 	return maxAdjacentSquares;
 }
 
-int TraceBackGlobalLean(int row, int col, DP_cell** table, int h)
-{
-	DP_CellFull* mainMaxCell = (DP_CellFull*)malloc(sizeof(DP_CellFull));
-	mainMaxCell->max = -1;
-	int maxCellSubs = 0;
-	enum Direction prevDirection = diag;
-	do
-	{
-		const DP_CellFull* maxCell = GetMaxAdjacentCells(row, col, prevDirection, table, h)->pHead;
-		if (maxCell->max > mainMaxCell->max)
-		{
-			mainMaxCell = maxCell;
-			maxCellSubs = 0;
-		}
-
-		if (maxCell->row < row && maxCell->col < col)
-		{
-			//substitution
-			prevDirection = diag;
-			maxCellSubs++;
-		}
-		else if (maxCell->row < row)
-		{
-			//deletion
-			prevDirection = up;
-		}
-		else
-		{
-			//insertion
-			prevDirection = left;
-		}
-		row = maxCell->row;
-		col = maxCell->col;
-		//AddPointsToAlignment(row, col, alignment); we dont care anymore
-	} while (row != 0 || col != 0);
-
-	return maxCellSubs;
-}
-
 int TraceBackGlobal(int row, int col, char* s1, char* s2, DP_cell** table, int h)
 {
 	if (row <= 0 || col <= 0)
@@ -291,10 +241,7 @@ int TraceBackGlobal(int row, int col, char* s1, char* s2, DP_cell** table, int h
 	DP_CellFull* mainMaxCell = malloc(sizeof(DP_CellFull));
 	mainMaxCell->max = INT_MIN;
 	int maxCellSubs = 0;
-	//char* s1Final = malloc(sizeof(char) * (row+1));
-	//int s1FinalPos = row;
-	//char* s2Final = malloc(sizeof(char) * (col+1));
-	//int s2FinalPos = col;
+
 	enum Direction prevDirection = diag;
 	do
 	{
@@ -307,30 +254,20 @@ int TraceBackGlobal(int row, int col, char* s1, char* s2, DP_cell** table, int h
 		
 		if (maxCell->row < row && maxCell->col < col)
 		{
-			//substitution
-			//s1Final[s1FinalPos--] = s1[row - 1];
-			//s2Final[s2FinalPos--] = s2[col - 1];
 			prevDirection = diag;
 			if (s1[row - 1] == s2[col - 1])
 				maxCellSubs++;
 		}
 		else if (maxCell->row < row)
 		{
-			//deletion
-			//s1Final[s1FinalPos--] = s1[row - 1];
-			//s2Final[s2FinalPos--] = '-';
 			prevDirection = up;
 		}
 		else
 		{
-			//insertion
-			//s1Final[s1FinalPos--] = '-';
-			//s2Final[s2FinalPos--] = s2[col - 1];
 			prevDirection = left;
 		}
 		row = maxCell->row;
 		col = maxCell->col;
-		//AddPointsToAlignment(row, col, alignment); we dont care anymore
 	} while (row > 0 || col > 0);
 
 	return maxCellSubs;

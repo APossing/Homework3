@@ -20,6 +20,6 @@ void PrintTable(DP_cell** table, int rows, int cols);
 int TraceBackGlobal(int row, int col, char* s1, char* s2, DP_cell** table, int h);
 int TraceBackGlobalLean(int row, int col, DP_cell** table, int h);
 FullCellList* GetMaxAdjacentCells(int row, int col, enum Direction prevDirection, DP_cell** table, int h);
-int GetAlignmentValueParallel(char* s1, int s1Length, char* s2, int s2Length, int h, int g, int match, int mismatch);
+int GetAlignmentValueParallel(char* s1, int s1Length, char* s2, int s2Length, int h, int g, int match, int mismatch, int threads);
 #endif
 

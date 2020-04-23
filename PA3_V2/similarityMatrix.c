@@ -1,11 +1,12 @@
 #include "similarityMatrix.h"
 
-SimValue* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
+SimValue* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum, int threads)
 {
 	ConcatSequence* c = BuildConcatSequence(seqArray, seqNum);
 
 	SimValue* similarityMatix = malloc(sizeof(SimValue) * (seqNum * (seqNum - 1) / 2));
-
+	clock_t task1Start = clock();
+	
 	Node* root = Build_GSTree(c->str, c->starIndexes, c->starIndexCount);
 
 	Fingerprint* fingerPrints = malloc(sizeof(Fingerprint) * seqNum);
@@ -33,13 +34,18 @@ SimValue* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 		fingerPrints[i].str[curLocation++] = '\0';
 		int b = 5;
 	}
+	clock_t task1End = clock();
+	printf("\nTask1 Total Time %f\n", ((double)(task1End - task1Start)) / CLOCKS_PER_SEC);
 	Destroy_Tree(root);
 
+
+
+	clock_t task2Start = clock();
 	for (int i = 0; i < seqNum; i++)
 	{
 		for (int j = i + 1; j < seqNum; j++)
 		{
-			printf("Alignment %d:%d\n", i, j);
+			printf("\n\nAlignment %d:%d\n", i, j);
 			char* seq1 = (char*)malloc((seqArray[i]->len_str + 2) * sizeof(char));
 			char* seq2 = (char*)malloc((seqArray[j]->len_str + 2) * sizeof(char));
 
@@ -61,7 +67,10 @@ SimValue* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 
 
 			LcsCoordinate* lcs = Get_LCS(gstHead);
-
+			printf("\nLCS:");
+			for (int i = lcs->x1; i <= lcs->x2; i++)
+				printf("%c", l_seq[i]);
+			printf("\n");
 			//your stuff here
 			char* s1StartReversed = Get_String_Reverse(seq1, lcs->x1);
 			char* s2StartReversed = Get_String_Reverse(seq2, lcs->y1 - temp_seq[1]);
@@ -71,20 +80,27 @@ SimValue* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 			char* s2EndStart = seq2 + lcs->y2 - temp_seq[1] + 1;
 			int s2EndStartLength = seqArray[j]->len_str - (lcs->y2 - temp_seq[1] + 1);
 			
-			
-			int A = GetAlignmentValueParallel(s1StartReversed, lcs->x1 - 1, s2StartReversed, lcs->y1 - temp_seq[1] - 1, -5, -2, 1, -2);
+			clock_t start = clock();
+			int A = GetAlignmentValueParallel(s1StartReversed, lcs->x1 - 1, s2StartReversed, lcs->y1 - temp_seq[1] - 1, -5, -2, 1, -2, threads);
 			int B = lcs->x2 - lcs->x1 + 1;
 
-			int C = GetAlignmentValueParallel(s1EndStart, s1EndStartLength, s2EndStart, s2EndStartLength, -5, -2, 1, -2);;
+			int C = GetAlignmentValueParallel(s1EndStart, s1EndStartLength, s2EndStart, s2EndStartLength, -5, -2, 1, -2,threads);
+			
+			clock_t end = clock();
+
+			double alignmentTime = ((double)(end - start)) / CLOCKS_PER_SEC/12;
 
 			//insert a value into matrix
 			similarityMatix[(j * (j - 1) / 2) + i].A = A;
 			similarityMatix[(j * (j - 1) / 2) + i].B = B;
 			similarityMatix[(j * (j - 1) / 2) + i].C = C;
 			similarityMatix[(j * (j - 1) / 2) + i].Total = A + B + C;
+			printf("Alignment %d:%d took %f and produced a similarity of (%d, %d, %d) total:%d\n", i, j, alignmentTime, A, B, C, A + B + C);
 			Destroy_Tree(gstHead);
 		}
 	}
+	clock_t task2End = clock();
+	printf("Task2 Total Time %f\n", ((double)(task2End - task2Start)) / CLOCKS_PER_SEC/12);
 	Print_Simularity_Matrix(similarityMatix, seqNum);
 	return similarityMatix;
 	//should return a matrix or should output it, or what ever XD
