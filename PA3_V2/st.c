@@ -852,7 +852,7 @@ void GetFingerPrints(Node* curNode, Fingerprint* fingerprints, int mixedColor)
 {
 	if (curNode == NULL)
 		return;
-	if (curNode->colour != mixedColor)
+	if (curNode->colour != mixedColor && !(curNode->pCh == NULL && curNode->i == curNode->j))
 	{
 		int firstChar = curNode->i;
 		int fingerPrintLocation = curNode->colour - 1;

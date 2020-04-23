@@ -40,6 +40,7 @@ Parameters* get_parameters(int argc, const char* argv[])
 				i++;
 				params->threads = atoi(argv[i]);
 				i++;
+				params->inputFileCount -= 2;
 			}
 		}
 	}

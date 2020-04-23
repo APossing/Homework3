@@ -8,7 +8,7 @@ SimValue* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum, int threads
 	clock_t task1Start = clock();
 	
 	Node* root = Build_GSTree(c->str, c->starIndexes, c->starIndexCount);
-
+	FILE* fingerPrintFile = fopen("FingerPrints.txt", "w");
 	Fingerprint* fingerPrints = malloc(sizeof(Fingerprint) * seqNum);
 	for (int i = 0; i < seqNum; i++)
 	{
@@ -16,9 +16,10 @@ SimValue* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum, int threads
 		fingerPrints[i].pHead = NULL;
 		fingerPrints[i].sequence = seqArray[i];
 	}
-	
+	clock_t fingerPrintTimeStart = clock();
 	GetFingerPrints(root, fingerPrints, mix_colour);
-
+	clock_t fingerPrintTimeEnd = clock();
+	fprintf(fingerPrintFile, "\nFingerprint time: %f\n", ((double)(fingerPrintTimeEnd - fingerPrintTimeStart)) / CLOCKS_PER_SEC);
 	for (int i = 0; i < seqNum; i++)
 	{
 		fingerPrints[i].str = malloc(sizeof(char) * fingerPrints[i].size+1);
@@ -32,14 +33,14 @@ SimValue* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum, int threads
 		}
 		fingerPrints[i].str[curLocation++] = c->str[curNode->myNode->i];
 		fingerPrints[i].str[curLocation++] = '\0';
-		int b = 5;
+		fprintf(fingerPrintFile, "\nFingerprint for sequence %d is %d long\n%s\n", i, fingerPrints[i].size, fingerPrints[i].str);
 	}
 	clock_t task1End = clock();
 	printf("\nTask1 Total Time %f\n", ((double)(task1End - task1Start)) / CLOCKS_PER_SEC);
 	Destroy_Tree(root);
 
-
-
+	double alignmentTime = 0;
+	double suffixTime = 0;
 	clock_t task2Start = clock();
 	for (int i = 0; i < seqNum; i++)
 	{
@@ -62,11 +63,16 @@ SimValue* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum, int threads
 			strcat(l_seq, seq2);
 
 			int temp_seq[2] = { 0, seqArray[i]->len_str + 1 };
-
+			clock_t startGST = clock();
+			
 			Node* gstHead = Build_GSTree(l_seq, temp_seq, 2);
-
+			
+			clock_t EndGST = clock();
+			suffixTime += ((double)(EndGST - startGST)) / CLOCKS_PER_SEC;
 
 			LcsCoordinate* lcs = Get_LCS(gstHead);
+			printf("\nLCS Length:%d", lcs->x2 - lcs->x1+1);
+			
 			printf("\nLCS:");
 			for (int i = lcs->x1; i <= lcs->x2; i++)
 				printf("%c", l_seq[i]);
@@ -88,19 +94,19 @@ SimValue* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum, int threads
 			
 			clock_t end = clock();
 
-			double alignmentTime = ((double)(end - start)) / CLOCKS_PER_SEC/12;
+			alignmentTime += ((double)(end - start)) / CLOCKS_PER_SEC/threads;
 
 			//insert a value into matrix
 			similarityMatix[(j * (j - 1) / 2) + i].A = A;
 			similarityMatix[(j * (j - 1) / 2) + i].B = B;
 			similarityMatix[(j * (j - 1) / 2) + i].C = C;
 			similarityMatix[(j * (j - 1) / 2) + i].Total = A + B + C;
-			printf("Alignment %d:%d took %f and produced a similarity of (%d, %d, %d) total:%d\n", i, j, alignmentTime, A, B, C, A + B + C);
+			printf("Alignment %d:%d took %f and produced a similarity of (%d, %d, %d) total:%d\n", i, j, ((double)(end - start)) / CLOCKS_PER_SEC / threads, A, B, C, A + B + C);
 			Destroy_Tree(gstHead);
 		}
 	}
 	clock_t task2End = clock();
-	printf("Task2 Total Time %f\n", ((double)(task2End - task2Start)) / CLOCKS_PER_SEC/12);
+	printf("Task2 Total Time: %f\nTask2 GST Time:%f\nTask2 Alignment Time: %f ", ((double)(task2End - task2Start)) / CLOCKS_PER_SEC/threads, suffixTime, alignmentTime);
 	Print_Simularity_Matrix(similarityMatix, seqNum);
 	return similarityMatix;
 	//should return a matrix or should output it, or what ever XD
@@ -118,10 +124,26 @@ void Print_Simularity_Matrix(SimValue* matrix, int seqNum)
 	printf("\n");
 	for (int i = 1; i < seqNum; i++)
 	{
-		printf("S%d\t", i);
+		printf("S%d", i);
 		for (int j = 0; j < i; j++)
 		{
-			printf("(%d,%d,%d,%d)\t", matrix[(i * (i - 1) / 2) + j].A, matrix[(i * (i - 1) / 2) + j].B, matrix[(i * (i - 1) / 2) + j].C, matrix[(i * (i - 1) / 2) + j].Total);
+			printf("\t%d", matrix[(i * (i - 1) / 2) + j].Total);
+		}
+		printf("\n");
+	}
+	printf("\n");
+	printf("\n");
+	for (int i = 0; i < seqNum; i++)
+	{
+		printf("S%d\t", i);
+	}
+	printf("\n");
+	for (int i = 1; i < seqNum; i++)
+	{
+		printf("S%d", i);
+		for (int j = 0; j < i; j++)
+		{
+			printf("\t%d", matrix[(i * (i - 1) / 2) + j].B);
 		}
 		printf("\n");
 	}
