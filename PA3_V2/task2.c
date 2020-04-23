@@ -23,6 +23,7 @@ DP_cell* FillInCell(int row, int col, int subScore, int delScore, int insScore, 
 DP_cell* CalculateCell(int row, int col, int h, int g, int match, int mismatch, DP_cell** table, char* s1, char* s2)
 {
 	int minValue = INT_MIN - h - g + 1;
+
 	if (row == 0 && col == 0)
 		return FillInCell(row, col, 0, minValue, minValue, table);
 	if (row == 0)
@@ -87,17 +88,24 @@ int GetMaxInsertionScore(int row, int col, int h, int g, int match, int mismatch
 
 int GetAlignmentValue(char* s1, int s1Length, char* s2, int s2Length, int h, int g, int match, int mismatch)
 {
-	DP_cell** table = malloc(sizeof(DP_cell*) * s1Length + 1);
+	DP_cell** table = (DP_cell**)malloc(sizeof(DP_cell*) * (s1Length + 1));
 	for (int i = 0; i < s1Length + 1; i++)
-		table[i] = malloc(sizeof(DP_cell) * s2Length + 1);
-
-
+		table[i] = (DP_cell*)malloc(sizeof(DP_cell) * (s2Length + 1));
+	
 	for (int row = 0; row <= s1Length; row++)
 		for (int col = 0; col <= s2Length; col++)
 			CalculateCell(row, col, h, g, match, mismatch, table, s1, s2);
+	
+	//PrintTable(table, s1Length + 1, s2Length + 1);
 
-	PrintTable(table, s1Length + 1, s2Length + 1);
-	return TraceBackGlobal(s1Length, s2Length,s1, s2, table, h);
+	int value = TraceBackGlobal(s1Length, s2Length,s1, s2, table, h);
+	
+	for (int i = 0; i < s1Length + 1; i++)
+	{
+		free(table[i]);
+	}
+	
+	return value;
 	
 }
 
@@ -119,7 +127,7 @@ void PrintTable(DP_cell** table, int rows, int cols)
 FullCellList* GetMaxAdjacentCells(int row, int col, enum Direction prevDirection, DP_cell** table, int h)
 {
 	FullCellList* maxAdjacentSquares = init_full_cell_list();
-	DP_cell* cell = malloc(sizeof(DP_cell));
+	DP_cell* cell = (DP_cell *)malloc(sizeof(DP_cell));
 	cell->deletionScore = table[row][col].deletionScore;
 	cell->insertionScore = table[row][col].insertionScore;
 	cell->substitutionScore = table[row][col].substitutionScore;
@@ -178,6 +186,7 @@ FullCellList* GetMaxAdjacentCells(int row, int col, enum Direction prevDirection
 	if (cell->substitutionScore == max)
 	{
 		DP_CellFull* cell = malloc(sizeof(DP_CellFull));
+		
 		cell->cell = &table[row - 1][col - 1];
 		cell->col = col - 1;
 		cell->row = row - 1;
@@ -190,7 +199,7 @@ FullCellList* GetMaxAdjacentCells(int row, int col, enum Direction prevDirection
 
 int TraceBackGlobalLean(int row, int col, DP_cell** table, int h)
 {
-	DP_CellFull* mainMaxCell = malloc(sizeof(DP_CellFull));
+	DP_CellFull* mainMaxCell = (DP_CellFull*)malloc(sizeof(DP_CellFull));
 	mainMaxCell->max = -1;
 	int maxCellSubs = 0;
 	enum Direction prevDirection = diag;
@@ -235,10 +244,10 @@ int TraceBackGlobal(int row, int col, char* s1, char* s2, DP_cell** table, int h
 	DP_CellFull* mainMaxCell = malloc(sizeof(DP_CellFull));
 	mainMaxCell->max = INT_MIN;
 	int maxCellSubs = 0;
-	char* s1Final = malloc(sizeof(char) * (row+1));
-	int s1FinalPos = row;
-	char* s2Final = malloc(sizeof(char) * (col+1));
-	int s2FinalPos = col;
+	//char* s1Final = malloc(sizeof(char) * (row+1));
+	//int s1FinalPos = row;
+	//char* s2Final = malloc(sizeof(char) * (col+1));
+	//int s2FinalPos = col;
 	enum Direction prevDirection = diag;
 	do
 	{
@@ -252,8 +261,8 @@ int TraceBackGlobal(int row, int col, char* s1, char* s2, DP_cell** table, int h
 		if (maxCell->row < row && maxCell->col < col)
 		{
 			//substitution
-			s1Final[s1FinalPos--] = s1[row - 1];
-			s2Final[s2FinalPos--] = s2[col - 1];
+			//s1Final[s1FinalPos--] = s1[row - 1];
+			//s2Final[s2FinalPos--] = s2[col - 1];
 			prevDirection = diag;
 			if (s1[row - 1] == s2[col - 1])
 				maxCellSubs++;
@@ -261,15 +270,15 @@ int TraceBackGlobal(int row, int col, char* s1, char* s2, DP_cell** table, int h
 		else if (maxCell->row < row)
 		{
 			//deletion
-			s1Final[s1FinalPos--] = s1[row - 1];
-			s2Final[s2FinalPos--] = '-';
+			//s1Final[s1FinalPos--] = s1[row - 1];
+			//s2Final[s2FinalPos--] = '-';
 			prevDirection = up;
 		}
 		else
 		{
 			//insertion
-			s1Final[s1FinalPos--] = '-';
-			s2Final[s2FinalPos--] = s2[col - 1];
+			//s1Final[s1FinalPos--] = '-';
+			//s2Final[s2FinalPos--] = s2[col - 1];
 			prevDirection = left;
 		}
 		row = maxCell->row;

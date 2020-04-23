@@ -90,7 +90,7 @@ Node* Build_GSTree(char* l_seq, int start_ind[], int count)
 
 	Colour_Tree(exit_node);
 
-	clock_t end = clock();
+	end = clock();
 
 	clock_t colouring_time = ((double)(end - start)) / CLOCKS_PER_SEC;
 
@@ -122,7 +122,7 @@ int Colour_Tree(Node* u)
 	else if (u->colour != colour)
 		colour = mix_colour;
 
-	printf("OUT ");
+	//printf("OUT ");
 	Print_Node(u);
 
 	return colour;
@@ -306,6 +306,7 @@ Node* Find_LCS_Node(Node* node)
 
 void Print_Node(Node* node)
 {
+	/*
 	switch (node->colour)
 	{
 	case 1:
@@ -342,7 +343,7 @@ void Print_Node(Node* node)
 		printf("Internal Node | ");
 	}
 	printf("SDepth: %d\n", node->sd);
-	printf("\033[0m");
+	printf("\033[0m");*/
 }
 
 Node* Insert_Sequence(char* seq, int start_ind[], int count)
@@ -374,8 +375,8 @@ Node* Insert_Sequence(char* seq, int start_ind[], int count)
 	Node* u_prime = NULL;	// u', no ' in c
 	Node* v_prime = NULL;	// v', no ' in c
 
-	Print_Node(pRoot);
-	Print_Node(cur);
+	//Print_Node(pRoot);
+	//Print_Node(cur);
 
 	// Main loop in charge of inserting every suffix in sequence
 	while (i <= j)
@@ -397,7 +398,7 @@ Node* Insert_Sequence(char* seq, int start_ind[], int count)
 			string_count++;
 			cur_colour++;
 		}
-		printf("\nInserting i:%d --- j:%d | %c -- %c\n", i, cur_j, gSeq[i], gSeq[j]);
+		//printf("\nInserting i:%d --- j:%d | %c -- %c\n", i, cur_j, gSeq[i], gSeq[j]);
 		//printf("Index %d\n", (i+1));
 		// Current is never root, its always the inserted node
 		u = cur->pPar;	// Step 1 (All Cases)
@@ -447,21 +448,21 @@ Node* Insert_Sequence(char* seq, int start_ind[], int count)
 
 Node* Case_IA(Node* v, int i, int alpha)
 {
-	printf("Case IA\n");
+	//printf("Case IA\n");
 	Node* cur = FindPath(v, i + alpha); // Step 3
 	return cur;
 }
 
 Node* Case_IB(Node* root, int i)
 {
-	printf("Case IB\n");
+	//printf("Case IB\n");
 	Node* cur = FindPath(root, i);		// Step 3
 	return cur;
 }
 
 Node* Case_IIA(Node* u, Node* v_prime, int i, int alpha_prime, int beta)
 {
-	printf("Case IIA\n");
+	//printf("Case IIA\n");
 	Node* v = NodeHops(v_prime, i + alpha_prime, beta);	// Step 4
 	u->sl = v;								// Step 5
 	int alpha = alpha_prime + beta;
@@ -471,7 +472,7 @@ Node* Case_IIA(Node* u, Node* v_prime, int i, int alpha_prime, int beta)
 
 Node* Case_IIB(Node* u, Node* root, int i, int beta_prime)
 {
-	printf("Case IIB\n");
+	//printf("Case IIB\n");
 	Node* v = NodeHops(root, i, beta_prime);// Step 4
 	u->sl = v;								// Step 5
 	Node* cur = FindPath(v, i + beta_prime);// Step 6
@@ -480,14 +481,14 @@ Node* Case_IIB(Node* u, Node* root, int i, int beta_prime)
 
 Node* FindPath(Node* u, int i)
 {
-	printf("Find Path at node\n");
-	Print_Node(u);
+	//printf("Find Path at node\n");
+	//Print_Node(u);
 	Node* cur = u;
 	Node* temp = NULL;
 
 	if (Find_Branch(cur->pCh, gSeq[i], &temp) == false)
 	{
-		printf("Creating New Leaf\n");
+		//printf("Creating New Leaf\n");
 		// Create new leaf node
 		Node* new_leaf = New_Node(i, cur_j, cur_j - cur_i + 1 , leafs);
 		new_leaf->colour = cur_colour;
@@ -508,7 +509,7 @@ Node* FindPath(Node* u, int i)
 	}
 	else		// Child has needed branch;
 	{
-		printf("Branch Found\n");
+		//printf("Branch Found\n");
 		Print_Node(temp);
 		cur = temp;
 		int j = cur->i;
@@ -523,7 +524,7 @@ Node* FindPath(Node* u, int i)
 		//  string has ligned up in such a way that its end is an internal node
 		if ((i-1) == cur_j)
 		{
-			printf("String and leaf matched up\n");
+			//printf("String and leaf matched up\n");
 			if (cur_colour != cur->colour)
 				cur->colour = mix_colour;
 			return cur;
@@ -535,7 +536,7 @@ Node* FindPath(Node* u, int i)
 		}
 		else
 		{
-			printf("Mismatch, new node created\n");
+			//printf("Mismatch, new node created\n");
 			Node* new_internal = New_Node(cur->i, j-1, cur->sd - (cur->j-(j-1)), seq_len + inter_node);
 			if (cur->colour != cur_colour)
 			{
@@ -573,7 +574,7 @@ Node* FindPath(Node* u, int i)
 
 Node* NodeHops(Node* u, int i, int beta)
 {
-	printf("Node hop on:\n");
+	//printf("Node hop on:\n");
 	Print_Node(u);
 	if (beta <= 0)
 		return u;
@@ -582,7 +583,7 @@ Node* NodeHops(Node* u, int i, int beta)
 	Node* temp = NULL;
 	if (Find_Branch(cur->pCh, gSeq[i], &temp) == true)
 	{
-		printf("Branch found\n");
+		//printf("Branch found\n");
 		Print_Node(temp);
 		cur = temp;
 		int len = cur->j - cur->i + 1;
@@ -591,7 +592,7 @@ Node* NodeHops(Node* u, int i, int beta)
 			return NodeHops(cur, i + len, beta - len);
 		else // if beta ends early
 		{
-			printf("Node Hop ended early, new node made\n");
+			//printf("Node Hop ended early, new node made\n");
 			Node* new_internal = New_Node(cur->i, cur->i + beta - 1, cur->pPar->sd + beta, seq_len + inter_node);
 			new_internal->colour = cur_colour;
 			inter_node++;
@@ -618,7 +619,7 @@ Node* NodeHops(Node* u, int i, int beta)
 			return new_internal;
 		}
 	}
-	printf("Node Hop went out of control, should not get here!\n");
+	//printf("Node Hop went out of control, should not get here!\n");
 	return NULL;
 }
 
@@ -666,17 +667,17 @@ bool Find_Branch(Node* u, char c, Node** found)
 		return true;
 	}
 
-	printf("Error in Find Branch, should never reach here!\n");
+	//printf("Error in Find Branch, should never reach here!\n");
 	return false;
 }
 
 void Get_Children(Node* u, FILE* fp, char* seq)
 {
-	fprintf(fp, "\nParent ID: %d, Index Start: %d, String Depth: %d, Start char:%c\n", u->id, u->i, u->sd, seq[u->i]);
+	//fprintf(fp, "\nParent ID: %d, Index Start: %d, String Depth: %d, Start char:%c\n", u->id, u->i, u->sd, seq[u->i]);
 	Node* temp = u->pCh;
 	if (temp == NULL)
 	{
-		fprintf(fp, "Node has no Children\n");
+		//fprintf(fp, "Node has no Children\n");
 		return;
 	}
 	while (temp != NULL)

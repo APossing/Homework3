@@ -3,44 +3,44 @@
 int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 {
 	ConcatSequence* c = BuildConcatSequence(seqArray, seqNum);
-	
+
 	int* similarityMatix = malloc(sizeof(int) * (seqNum * (seqNum - 1) / 2));
-	
-	Node* root = Build_GSTree(c->str, c->starIndexes, c->starIndexCount);
 
-	Fingerprint* fingerPrints = malloc(sizeof(Fingerprint) * seqNum);
-	for (int i = 0; i < seqNum; i++)
-	{
-		fingerPrints[i].size = INT_MAX;
-		fingerPrints[i].pHead = NULL;
-		fingerPrints[i].sequence = seqArray[i];
-	}
-	
-	GetFingerPrints(root, fingerPrints, mix_colour);
+	//Node* root = Build_GSTree(c->str, c->starIndexes, c->starIndexCount);
 
-	for (int i = 0; i < seqNum; i++)
-	{
-		fingerPrints[i].str = malloc(sizeof(char) * fingerPrints[i].size+1);
-		NodeListNode* curNode = fingerPrints[i].pHead;
-		int curLocation = 0;
-		while (curNode->pNext != NULL)
-		{
-			for (int j = curNode->myNode->i; j <= curNode->myNode->j; j++)
-				fingerPrints[i].str[curLocation++] = c->str[j];
-			curNode = curNode->pNext;
-		}
-		fingerPrints[i].str[curLocation++] = c->str[curNode->myNode->i];
-		fingerPrints[i].str[curLocation++] = '\0';
-		int b = 5;
-	}
-		
-	
+	//Fingerprint* fingerPrints = malloc(sizeof(Fingerprint) * seqNum);
+	//for (int i = 0; i < seqNum; i++)
+	//{
+	//	fingerPrints[i].size = INT_MAX;
+	//	fingerPrints[i].pHead = NULL;
+	//	fingerPrints[i].sequence = seqArray[i];
+	//}
+	//
+	//GetFingerPrints(root, fingerPrints, mix_colour);
+
+	//for (int i = 0; i < seqNum; i++)
+	//{
+	//	fingerPrints[i].str = malloc(sizeof(char) * fingerPrints[i].size+1);
+	//	NodeListNode* curNode = fingerPrints[i].pHead;
+	//	int curLocation = 0;
+	//	while (curNode->pNext != NULL)
+	//	{
+	//		for (int j = curNode->myNode->i; j <= curNode->myNode->j; j++)
+	//			fingerPrints[i].str[curLocation++] = c->str[j];
+	//		curNode = curNode->pNext;
+	//	}
+	//	fingerPrints[i].str[curLocation++] = c->str[curNode->myNode->i];
+	//	fingerPrints[i].str[curLocation++] = '\0';
+	//	int b = 5;
+	//}
+	//Destroy_Tree(root);
+
 	for (int i = 0; i < seqNum; i++)
 	{
 		for (int j = i + 1; j < seqNum; j++)
 		{
-			char* seq1 = (char*)malloc((seqArray[i]->len_str + 1) * sizeof(char));
-			char* seq2 = (char*)malloc((seqArray[j]->len_str + 1) * sizeof(char));
+			char* seq1 = (char*)malloc((seqArray[i]->len_str + 2) * sizeof(char));
+			char* seq2 = (char*)malloc((seqArray[j]->len_str + 2) * sizeof(char));
 
 			strcpy(seq1, seqArray[i]->str);
 			strcpy(seq2, seqArray[j]->str);
@@ -50,33 +50,35 @@ int* Compute_Similarity_Matrix(Sequence** seqArray, int seqNum)
 			seq2[seqArray[j]->len_str] = '$';
 			seq2[seqArray[j]->len_str + 1] = '\0';
 
-			char* l_seq = (char*)malloc((strlen(seq1) + strlen(seq1)) * sizeof(char));
+			char* l_seq = (char*)malloc((strlen(seq1) + strlen(seq2) + 10000) * sizeof(char));
 			strcpy(l_seq, seq1);
 			strcat(l_seq, seq2);
 
-			int temp_seq[2] = {0, seqArray[i]->len_str+1};
+			int temp_seq[2] = { 0, seqArray[i]->len_str + 1 };
 
 			Node* gstHead = Build_GSTree(l_seq, temp_seq, 2);
 
-			
+
 			LcsCoordinate* lcs = Get_LCS(gstHead);
 
 			//your stuff here
 			char* s1StartReversed = Get_String_Reverse(seq1, lcs->x1);
-			char* s2StartReversed = Get_String_Reverse(seq2, lcs->y1);
-			int A = GetAlignmentValue(s1StartReversed, lcs->x1, s2StartReversed, lcs->y1, -5, -2, 1, -2);
-			
-			int B = lcs->x2-lcs->x1+1;
-			
+			char* s2StartReversed = Get_String_Reverse(seq2, lcs->y1 - temp_seq[1]);
+
 			char* s1EndStart = seq1 + lcs->x2 + 1;
-			int s1EndStartLength = seqArray[i]->len_str - lcs->x2-1;
-			char* s2EndStart = seq2 + lcs->y2 + 1;
-			int s2EndStartLength = seqArray[j]->len_str - lcs->y2-1;
+			int s1EndStartLength = seqArray[i]->len_str - lcs->x2 - 1;
+			char* s2EndStart = seq2 + lcs->y2 - temp_seq[1] + 1;
+			int s2EndStartLength = seqArray[j]->len_str - (lcs->y2 - temp_seq[1] + 1);
 			
-			int C = GetAlignmentValue(s1EndStart,s1EndStartLength ,s2EndStart ,s2EndStartLength, -5, -2, 1, -2);;
+			
+			int A = GetAlignmentValue(s1StartReversed, lcs->x1 - 1, s2StartReversed, lcs->y1 - temp_seq[1] - 1, -5, -2, 1, -2);
+			int B = lcs->x2 - lcs->x1 + 1;
+
+			int C = GetAlignmentValue(s1EndStart, s1EndStartLength, s2EndStart, s2EndStartLength, -5, -2, 1, -2);;
 
 			//insert a value into matrix
-			similarityMatix[(j*(j - 1) / 2) + i] = A+B+C;
+			similarityMatix[(j * (j - 1) / 2) + i] = A + B + C;
+			Destroy_Tree(gstHead);
 		}
 	}
 
@@ -107,11 +109,12 @@ void Print_Simularity_Matrix(int* matrix, int seqNum)
 
 char* Get_String_Reverse(char* str, int length)
 {
-	char* returnStr = malloc(sizeof(char) * length);
-	for(int i = length-1; i >= 0; i--)
+	char* returnStr = malloc(sizeof(char) * length + 1);
+	for (int i = length - 1; i >= 0; i--)
 	{
 		returnStr[length - 1 - i] = str[i];
 	}
+	returnStr[length] = '\0';
 	return returnStr;
 }
 
@@ -120,13 +123,13 @@ ConcatSequence* BuildConcatSequence(Sequence** seqArray, int seqNum)
 	ConcatSequence* concat = malloc(sizeof(ConcatSequence));
 	concat->starIndexCount = seqNum;
 	concat->starIndexes = malloc(sizeof(int) * seqNum);
-	
+
 	int length = 0;
 	for (int i = 0; i < seqNum; i++)
 	{
 		length += seqArray[i]->len_str + 1;
 	}
-	concat->str = malloc(sizeof(char) * length+1);
+	concat->str = malloc(sizeof(char) * length + 1);
 	concat->strLength = length;
 	int curLocation = 0;
 	for (int i = 0; i < seqNum; i++)
