@@ -128,73 +128,6 @@ int Colour_Tree(Node* u)
 	return colour;
 }
 
-//char* Get_Fingerprint(Node* node, int seq_num, int mix_colour)
-//{
-//	Fingerprint* fp = (Fingerprint*)malloc(sizeof(Fingerprint));
-//	fp->x = fp->y = -1;
-//	srand(time(0));
-//
-//	Node* smallest_fp = Find_Fingerprint(node, seq_num, mix_colour);
-//	if (Is_Root(smallest_fp) == true)
-//		return NULL;
-//	fp->x = smallest_fp->i - smallest_fp->sd;
-//	fp->y = smallest_fp->i;
-//
-//	return fp;
-//}
-
-Node* Find_Fingerprint(Node* node, int seq_num, int mix_colour)
-{
-	if (node == NULL)
-		return NULL;
-
-	if (node->colour != mix_colour && node->colour != seq_num)
-	{
-		return Find_Fingerprint(node->pCh, seq_num, mix_colour);
-	}
-
-	Node* sib = Find_Fingerprint(node->pSib, seq_num, mix_colour);
-	Node* ch = NULL;
-	
-	if (node->colour == seq_num)
-	{
-		if (sib == NULL)
-			return node;
-		ch = node;
-	}
-	if (node->colour == mix_colour)
-	{
-		ch = Find_Fingerprint(node->pCh, seq_num, mix_colour);
-		if (ch == NULL && sib == NULL)
-			return NULL;
-
-		if (ch == NULL)
-			return sib;
-
-		if (sib == NULL)
-			return ch;
-	}
-
-	if (sib->sd > ch->sd)
-	{
-		return ch;
-	}
-	else if (sib->sd < ch->sd)
-	{
-		return sib;
-	}
-	else
-	{
-		int choice = rand() % 2;
-		if (choice == 0)
-		{
-			return ch;
-		}
-		else
-			return sib;
-	}
-}
-
 LcsCoordinate* Get_LCS(Node* node)
 {
 	LcsCoordinate* lcs = (LcsCoordinate*)malloc(sizeof(LcsCoordinate));
@@ -381,6 +314,7 @@ Node* Insert_Sequence(char* seq, int start_ind[], int count)
 	// Main loop in charge of inserting every suffix in sequence
 	while (i <= j)
 	{
+		// Tipping point to start colouring in the next sequences colour
 		cur_i = i;
 		if (i >= tipping_point && string_count < count)
 		{
@@ -522,6 +456,7 @@ Node* FindPath(Node* u, int i)
 
 		// This case  means that
 		//  string has ligned up in such a way that its end is an internal node
+		//	crucial in execution for correct tree colouring!
 		if ((i-1) == cur_j)
 		{
 			//printf("String and leaf matched up\n");

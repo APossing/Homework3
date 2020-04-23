@@ -18,21 +18,22 @@ typedef struct node
 	struct node* pPar;		// Pointer to parent
 	struct node* sl;		// Suffix Link Pointer
 
-	int id;			// ID of node
+	int id;					// ID of node
 
-	int i;			// Start of edge Index
-	int j;			// End of edge Index (including)
-	int sd;			// String Depth
-	int colour;
-
+	int i;					// Start of edge Index
+	int j;					// End of edge Index (including)
+	int sd;					// String Depth
+	int colour;				// Colour of the given node
+							// i through k for single colour
+							// k+1 for  mixed
 } Node;
 
 typedef struct lcsCoordinate
 {
-	int x1;
-	int y1;
-	int x2;
-	int y2;
+	int x1;					// Sequence 1 start index of lcs
+	int y1;					// Sequence 1 end   index of lcs
+	int x2;					// Sequence 2 start index of lcs
+	int y2;					// Sequence 2 end   index of lcs
 } LcsCoordinate;
 
 typedef struct nodeListNode
@@ -99,18 +100,53 @@ bool Is_Leaf(Node* u);
 //	False if not a Root
 bool Is_Root(Node* u);
 
+// Description:
+//	The function is in charge of initialising an driving
+//  the tree building process. First creates tree and then
+//	colourse it
+// Parameters:
+//	Concatenated Sequence, array of start indexes, count of sequences
+// Returns:
+//	Root node of tree
 Node* Build_GSTree(char* l_seq, int start_ind[], int count);
 
+// Description:
+//	The function colours the tree in a depth first search manner
+// Parameters:
+//	Node that recursion goes from
+// Returns:
+//	integer
+//	0 - no colour (no node)
+//	i - k - no mixing, colour of node
+//	k + 1 - mixed colour
 int Colour_Tree(Node* u);
 
-char* Get_Fingerprint(Node* node, int seq_num, int mix_colour);
-
-Node* Find_Fingerprint(Node* node, int seq_num, int mix_colour);
-
+// Description:
+//	Initialising function for searching of lcs, creates objects for storage
+//	Handles output from recursion to capture LCS or return NULL
+// Parameters:
+//	Root node of tree to start from
+// Returns:
+//	NULL if there are is no LCS, lcs object with location otherwise
 LcsCoordinate* Get_LCS(Node* node);
 
+// Description:
+//	Recursive function that looks for lcs, while making sure it is the longest
+//	If multiple of the same length, randomly one is chosen
+// Parameters:
+//	Node that carries the recursion
+// Returns:
+//	Returns NULL if no LCS
+//	othrwise returns Node with lcs
 Node* Find_LCS_Node(Node* node);
 
+// Description:
+//	Function used for check, prints details about a node and colours it if 
+//	the number of sequences is bellow 6
+// Parameters:
+//	Node to print details about
+// Returns:
+//	Nothing
 void Print_Node(Node* node);
 
 // Description:
@@ -286,8 +322,20 @@ void Exact_Match_Repeat(Node* u, FILE* fp);
 
 void GetFingerPrints(Node* curNode, Fingerprint* fingerprints, int mixedColor);
 
+// Description:
+//	Prints the tree in detail for accuracy check
+// Parameters:
+//	Node to print and depth of node to space out values in a tree manner
+// Returns:
+//	Nothing
 void Tree_Detailed_Print(Node* node, int depth);
 
+// Description:
+//	Prints 2 * depth spaces for easier reading of tree
+// Parameters:
+//	depth to be used for amount of space prints
+// Returns:
+//	Nothing
 void Print_Spaces(int depth);
 
 #endif
